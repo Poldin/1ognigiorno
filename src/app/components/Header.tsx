@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { useState } from "react";
+import { trackButtonClick, trackModalOpen, trackModalClose, trackFormSubmission, trackSocialShare, trackSubscription } from "../lib/gtag";
 
 export default function Header() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -45,6 +46,10 @@ export default function Header() {
       const data = await response.json();
 
       if (response.ok) {
+        const subscriptionMethod = subscribeForm.email && subscribeForm.phone ? 'both' : 
+                                 subscribeForm.email ? 'email' : 'phone';
+        trackSubscription(subscriptionMethod);
+        trackFormSubmission('subscribe', true);
         setSubmitStatus('success');
         setSubscribeForm({ email: '', phone: '', firstName: '' });
         setTimeout(() => {
@@ -52,10 +57,12 @@ export default function Header() {
           setSubmitStatus('idle');
         }, 2000);
       } else {
+        trackFormSubmission('subscribe', false);
         setSubmitStatus('error');
         setErrorMessage(data.error || 'Errore durante l\'iscrizione');
       }
     } catch {
+      trackFormSubmission('subscribe', false);
       setSubmitStatus('error');
       setErrorMessage('Errore di connessione. Riprova.');
     } finally {
@@ -64,6 +71,7 @@ export default function Header() {
   };
 
   const openSubscribeModal = () => {
+    trackModalOpen('subscribe');
     setIsSubscribeModalOpen(true);
     setIsMenuOpen(false); // Chiudi il menu mobile se aperto
   };
@@ -87,6 +95,7 @@ export default function Header() {
     }
 
     // Fallback: apri il modal di condivisione
+    trackModalOpen('share');
     setIsShareModalOpen(true);
     setIsMenuOpen(false);
   };
@@ -97,6 +106,7 @@ export default function Header() {
       icon: '💬',
       color: 'from-green-500 to-green-600',
       action: () => {
+        trackSocialShare('WhatsApp');
         const text = encodeURIComponent('Scopri 1OgniGiorno - prodotti straordinari ogni giorno!');
         const url = encodeURIComponent(window.location.origin);
         window.open(`https://wa.me/?text=${text}%20${url}`, '_blank');
@@ -108,6 +118,7 @@ export default function Header() {
       icon: '✈️',
       color: 'from-blue-500 to-blue-600',
       action: () => {
+        trackSocialShare('Telegram');
         const text = encodeURIComponent('Scopri 1OgniGiorno - prodotti straordinari ogni giorno!');
         const url = encodeURIComponent(window.location.origin);
         window.open(`https://t.me/share/url?url=${url}&text=${text}`, '_blank');
@@ -119,6 +130,7 @@ export default function Header() {
       icon: '👥',
       color: 'from-blue-600 to-blue-700',
       action: () => {
+        trackSocialShare('Facebook');
         const url = encodeURIComponent(window.location.origin);
         window.open(`https://www.facebook.com/sharer/sharer.php?u=${url}`, '_blank');
         setIsShareModalOpen(false);
@@ -129,6 +141,7 @@ export default function Header() {
       icon: '🐦',
       color: 'from-gray-800 to-black',
       action: () => {
+        trackSocialShare('Twitter');
         const text = encodeURIComponent('Scopri 1OgniGiorno - prodotti straordinari ogni giorno!');
         const url = encodeURIComponent(window.location.origin);
         window.open(`https://twitter.com/intent/tweet?text=${text}&url=${url}`, '_blank');
@@ -140,6 +153,7 @@ export default function Header() {
       icon: '💼',
       color: 'from-blue-700 to-blue-800',
       action: () => {
+        trackSocialShare('LinkedIn');
         const url = encodeURIComponent(window.location.origin);
         window.open(`https://www.linkedin.com/sharing/share-offsite/?url=${url}`, '_blank');
         setIsShareModalOpen(false);
@@ -150,6 +164,7 @@ export default function Header() {
       icon: '📧',
       color: 'from-gray-600 to-gray-700',
       action: () => {
+        trackSocialShare('Email');
         const subject = encodeURIComponent('Scopri 1OgniGiorno');
         const body = encodeURIComponent(`Ciao!\n\nVolevo condividere con te 1OgniGiorno, una piattaforma che ogni giorno presenta un prodotto straordinario e lo trasforma in un fenomeno virale.\n\nDai un'occhiata: ${window.location.origin}`);
         window.open(`mailto:?subject=${subject}&body=${body}`);
@@ -161,6 +176,7 @@ export default function Header() {
       icon: '🔗',
       color: 'from-purple-600 to-purple-700',
       action: async () => {
+        trackSocialShare('Copy Link');
         try {
           await navigator.clipboard.writeText(window.location.origin);
           // Potresti aggiungere una notifica di successo qui
@@ -202,7 +218,11 @@ export default function Header() {
             
             {/* Desktop CTA Buttons */}
             <div className="hidden md:flex items-center gap-3">
-              <Link href="/how" className="inline-flex items-center px-3 py-2 text-sm font-medium text-gray-700 hover:text-black transition-colors">
+              <Link 
+                href="/how" 
+                onClick={() => trackButtonClick('Come funziona', 'Header Desktop')}
+                className="inline-flex items-center px-3 py-2 text-sm font-medium text-gray-700 hover:text-black transition-colors"
+              >
                 🤔 Come funziona
               </Link>
               <button 
@@ -276,7 +296,10 @@ export default function Header() {
                 <Link 
                   href="/how" 
                   className="flex items-center gap-4 p-4 rounded-xl bg-gradient-to-r from-blue-50 to-purple-50 border border-blue-100 text-gray-900 hover:from-blue-100 hover:to-purple-100 transition-all duration-200"
-                  onClick={() => setIsMenuOpen(false)}
+                  onClick={() => {
+                    trackButtonClick('Come funziona', 'Header Mobile');
+                    setIsMenuOpen(false);
+                  }}
                 >
                   <span className="text-2xl">🤔</span>
                   <div>
@@ -339,7 +362,10 @@ export default function Header() {
                     <h3 className="text-lg font-semibold text-gray-900">Iscriviti agli aggiornamenti</h3>
                   </div>
                   <button
-                    onClick={() => setIsSubscribeModalOpen(false)}
+                    onClick={() => {
+                      trackModalClose('subscribe');
+                      setIsSubscribeModalOpen(false);
+                    }}
                     className="p-2 rounded-lg text-gray-400 hover:text-gray-600 hover:bg-gray-100 transition-colors"
                   >
                     <svg className="h-5 w-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -478,7 +504,10 @@ export default function Header() {
                     <h3 className="text-lg font-semibold text-gray-900">Condividi 1OgniGiorno</h3>
                   </div>
                   <button
-                    onClick={() => setIsShareModalOpen(false)}
+                    onClick={() => {
+                      trackModalClose('share');
+                      setIsShareModalOpen(false);
+                    }}
                     className="p-2 rounded-lg text-gray-400 hover:text-gray-600 hover:bg-gray-100 transition-colors"
                   >
                     <svg className="h-5 w-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">

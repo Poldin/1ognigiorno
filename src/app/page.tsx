@@ -1,14 +1,32 @@
+"use client";
+
 import Link from "next/link";
 import Header from "./components/Header";
 import Footer from "./components/Footer";
+import { trackButtonClick } from "./lib/gtag";
+import { useScrollTracking, useSectionTracking, usePageTracking } from "./lib/useAnalytics";
 
 export default function Home() {
+  // Analytics tracking
+  useScrollTracking();
+  usePageTracking('homepage');
+  
+  const heroRef = useSectionTracking('hero');
+  const featuresRef = useSectionTracking('features');
+  const howItWorksRef = useSectionTracking('how-it-works');
+  const showcaseRef = useSectionTracking('showcase');
+  const ctaRef = useSectionTracking('cta');
+
+  const handleCTAClick = (buttonName: string, location: string) => {
+    trackButtonClick(buttonName, location);
+  };
+
   return (
     <div className="min-h-screen bg-white">
       <Header />
 
       {/* Hero Section */}
-      <section className="relative overflow-hidden bg-white">
+      <section ref={heroRef} className="relative overflow-hidden bg-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-20 pb-16">
           <div className="text-center">
             <h1 className="text-5xl md:text-7xl font-bold text-black mb-6">
@@ -20,10 +38,17 @@ export default function Home() {
                lo racconta con passione e lo trasforma in un fenomeno virale. Un prodotto alla volta, una storia alla volta.
              </p>
                          <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
-               <button className="bg-black text-white px-8 py-4 rounded-lg text-lg font-semibold hover:bg-gray-800 transition-all transform hover:scale-105">
+               <button 
+                 onClick={() => handleCTAClick('Scopri il prodotto di oggi', 'Hero Section')}
+                 className="bg-black text-white px-8 py-4 rounded-lg text-lg font-semibold hover:bg-gray-800 transition-all transform hover:scale-105"
+               >
                  🚀 Scopri il prodotto di oggi
                </button>
-               <Link href="/how" className="border-2 border-gray-300 text-gray-700 px-8 py-4 rounded-lg text-lg font-semibold hover:border-gray-400 transition-all inline-flex items-center justify-center">
+               <Link 
+                 href="/how" 
+                 onClick={() => handleCTAClick('Come funziona', 'Hero Section')}
+                 className="border-2 border-gray-300 text-gray-700 px-8 py-4 rounded-lg text-lg font-semibold hover:border-gray-400 transition-all inline-flex items-center justify-center"
+               >
                  🤔 Come funziona
                </Link>
              </div>
@@ -35,7 +60,7 @@ export default function Home() {
       </section>
 
       {/* Features Section */}
-      <section className="py-20 bg-gray-50">
+      <section ref={featuresRef} className="py-20 bg-gray-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                      <div className="text-center mb-16">
              <h2 className="text-4xl font-bold text-black mb-4">
@@ -75,7 +100,7 @@ export default function Home() {
              </section>
 
        {/* Come Funziona Section */}
-       <section className="py-20 bg-white">
+       <section ref={howItWorksRef} className="py-20 bg-white">
          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
            <div className="text-center mb-16">
              <h2 className="text-4xl font-bold text-black mb-4">
@@ -131,7 +156,7 @@ export default function Home() {
        </section>
 
        {/* Product Showcase */}
-       <section className="py-20 bg-gray-50">
+       <section ref={showcaseRef} className="py-20 bg-gray-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                      <div className="grid lg:grid-cols-2 gap-12 items-center">
              <div>
@@ -171,7 +196,7 @@ export default function Home() {
       </section>
 
       {/* CTA Section */}
-             <section className="py-20 bg-black">
+             <section ref={ctaRef} className="py-20 bg-black">
          <div className="max-w-4xl mx-auto text-center px-4 sm:px-6 lg:px-8">
            <h2 className="text-4xl font-bold text-white mb-6">
              Scopri il prodotto di domani, oggi
@@ -181,10 +206,16 @@ export default function Home() {
              Non perdere il prossimo fenomeno globale.
            </p>
            <div className="flex flex-col sm:flex-row gap-4 justify-center">
-             <button className="bg-white text-black px-8 py-4 rounded-lg text-lg font-semibold hover:bg-gray-100 transition-all transform hover:scale-105">
+             <button 
+               onClick={() => handleCTAClick('Iscriviti gratuitamente', 'CTA Section')}
+               className="bg-white text-black px-8 py-4 rounded-lg text-lg font-semibold hover:bg-gray-100 transition-all transform hover:scale-105"
+             >
                🚀 Iscriviti gratuitamente
              </button>
-             <button className="border-2 border-white text-white px-8 py-4 rounded-lg text-lg font-semibold hover:bg-white hover:text-black transition-all">
+             <button 
+               onClick={() => handleCTAClick('Ricevi le notifiche via email', 'CTA Section')}
+               className="border-2 border-white text-white px-8 py-4 rounded-lg text-lg font-semibold hover:bg-white hover:text-black transition-all"
+             >
                📧 Ricevi le notifiche via email
              </button>
            </div>

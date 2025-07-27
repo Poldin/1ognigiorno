@@ -1,14 +1,32 @@
+"use client";
+
 import Link from "next/link";
 import Header from "../components/Header";
 import Footer from "../components/Footer";
+import { trackButtonClick } from "../lib/gtag";
+import { useScrollTracking, useSectionTracking, usePageTracking } from "../lib/useAnalytics";
 
 export default function HowItWorks() {
+  // Analytics tracking
+  useScrollTracking();
+  usePageTracking('how-it-works');
+  
+  const heroRef = useSectionTracking('how-hero');
+  const processRef = useSectionTracking('process');
+  const timelineRef = useSectionTracking('timeline');
+  const statsRef = useSectionTracking('stats');
+  const ctaRef = useSectionTracking('how-cta');
+
+  const handleCTAClick = (buttonName: string, location: string) => {
+    trackButtonClick(buttonName, location);
+  };
+
   return (
     <div className="min-h-screen bg-white">
       <Header />
 
       {/* Hero Section */}
-      <section className="relative bg-gradient-to-br from-blue-50 via-white to-purple-50 py-20">
+      <section ref={heroRef} className="relative bg-gradient-to-br from-blue-50 via-white to-purple-50 py-20">
         <div className="max-w-4xl mx-auto text-center px-4 sm:px-6 lg:px-8">
           <h1 className="text-5xl font-bold text-black mb-6">
             Come funziona
@@ -22,7 +40,7 @@ export default function HowItWorks() {
       </section>
 
       {/* Main Process */}
-      <section className="py-20 bg-white">
+      <section ref={processRef} className="py-20 bg-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="space-y-20">
             
@@ -171,7 +189,7 @@ export default function HowItWorks() {
       </section>
 
       {/* Timeline */}
-      <section className="py-20 bg-gray-50">
+      <section ref={timelineRef} className="py-20 bg-gray-50">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16">
             <h2 className="text-3xl font-bold text-black mb-4">
@@ -231,7 +249,7 @@ export default function HowItWorks() {
       </section>
 
       {/* Stats Section */}
-      <section className="py-20 bg-white">
+      <section ref={statsRef} className="py-20 bg-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16">
             <h2 className="text-3xl font-bold text-black mb-4">
@@ -264,7 +282,7 @@ export default function HowItWorks() {
       </section>
 
       {/* CTA Section */}
-      <section className="py-20 bg-black">
+      <section ref={ctaRef} className="py-20 bg-black">
         <div className="max-w-4xl mx-auto text-center px-4 sm:px-6 lg:px-8">
           <h2 className="text-4xl font-bold text-white mb-6">
             Pronto a scoprire il prodotto di domani?
@@ -273,10 +291,17 @@ export default function HowItWorks() {
             Unisciti alla community che scopre per prima i prodotti destinati a cambiare il mondo.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <button className="bg-white text-black px-8 py-4 rounded-lg text-lg font-semibold hover:bg-gray-100 transition-all transform hover:scale-105">
+            <button 
+              onClick={() => handleCTAClick('Iscriviti ora', 'How Page CTA')}
+              className="bg-white text-black px-8 py-4 rounded-lg text-lg font-semibold hover:bg-gray-100 transition-all transform hover:scale-105"
+            >
               🚀 Iscriviti ora
             </button>
-            <Link href="/" className="border-2 border-white text-white px-8 py-4 rounded-lg text-lg font-semibold hover:bg-white hover:text-black transition-all inline-flex items-center justify-center">
+            <Link 
+              href="/" 
+              onClick={() => handleCTAClick('Torna alla home', 'How Page CTA')}
+              className="border-2 border-white text-white px-8 py-4 rounded-lg text-lg font-semibold hover:bg-white hover:text-black transition-all inline-flex items-center justify-center"
+            >
               ← Torna alla home
             </Link>
           </div>
