@@ -192,7 +192,7 @@ export default function Header() {
                   <div className="w-8 h-8 bg-gradient-to-br from-blue-600 to-purple-600 rounded-lg flex items-center justify-center">
                     <span className="text-white font-bold text-lg">1</span>
                   </div>
-                  <div className="absolute -top-1 -right-1 w-3 h-3 bg-orange-400 rounded-full"></div>
+                  {/* <div className="absolute -top-1 -right-1 w-3 h-3 bg-orange-400 rounded-full"></div> */}
                 </div>
                 <h1 className="text-xl sm:text-2xl font-black tracking-tight text-transparent bg-gradient-to-r from-gray-900 via-blue-800 to-purple-800 bg-clip-text">
                   OgniGiorno
