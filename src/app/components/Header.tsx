@@ -223,13 +223,13 @@ export default function Header() {
                 onClick={() => trackButtonClick('Come funziona', 'Header Desktop')}
                 className="inline-flex items-center px-3 py-2 text-sm font-medium text-gray-700 hover:text-black transition-colors"
               >
-                🤔 Come funziona
+                🤔 Scopri
               </Link>
               <button 
                 onClick={openSubscribeModal}
-                className="inline-flex items-center px-4 py-2 border border-gray-300 rounded-md text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 transition-colors"
+                className="inline-flex items-center px-3 py-2 text-sm font-medium text-gray-700 hover:text-black transition-colors"
               >
-                📧 Iscriviti agli aggiornamenti
+                😊 Aggiornati
               </button>
               <button 
                 onClick={handleNativeShare}
@@ -303,7 +303,7 @@ export default function Header() {
                 >
                   <span className="text-2xl">🤔</span>
                   <div>
-                    <div className="font-semibold">Come funziona</div>
+                    <div className="font-semibold">Scopri</div>
                     <div className="text-sm text-gray-600">Scopri di più su OgniGiorno</div>
                   </div>
                 </Link>
@@ -312,10 +312,10 @@ export default function Header() {
                   onClick={openSubscribeModal}
                   className="w-full flex items-center gap-4 p-4 rounded-xl bg-gradient-to-r from-green-50 to-emerald-50 border border-green-100 text-gray-900 hover:from-green-100 hover:to-emerald-100 transition-all duration-200"
                 >
-                  <span className="text-2xl">📧</span>
+                  <span className="text-2xl">😊</span>
                   <div className="text-left">
-                    <div className="font-semibold">Iscriviti agli aggiornamenti</div>
-                    <div className="text-sm text-gray-600">Resta sempre aggiornato</div>
+                    <div className="font-semibold">Aggiornati</div>
+                    <div className="text-sm text-gray-600">Non perderti prodotti straordinari</div>
                   </div>
                 </button>
                 
@@ -334,7 +334,7 @@ export default function Header() {
               {/* Footer */}
               <div className="px-6 py-4 border-t border-gray-200 bg-gray-50">
                 <p className="text-center text-sm text-gray-500">
-                  Scopri ogni giorno un prodotto straordinario.
+                  Scopri ogni giorno un prodotto straordinario. Insieme a 1200+ appassionati.
                 </p>
               </div>
             </div>
@@ -358,7 +358,7 @@ export default function Header() {
               <div className="px-6 py-4 border-b border-gray-200">
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-3">
-                    <span className="text-2xl">📧</span>
+                    <span className="text-2xl">😊</span>
                     <h3 className="text-lg font-semibold text-gray-900">Iscriviti agli aggiornamenti</h3>
                   </div>
                   <button
