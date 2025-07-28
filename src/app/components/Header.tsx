@@ -78,7 +78,7 @@ export default function Header() {
 
   const handleNativeShare = async () => {
     const shareData = {
-      title: '1OgniGiorno - Scopri prodotti straordinari ogni giorno',
+      title: 'Il prodotto del giorno - Scopri prodotti straordinari ogni giorno',
       text: 'La piattaforma che ogni giorno presenta un prodotto straordinario e lo trasforma in un fenomeno virale.',
       url: window.location.origin
     };
@@ -107,7 +107,7 @@ export default function Header() {
       color: 'from-green-500 to-green-600',
       action: () => {
         trackSocialShare('WhatsApp');
-        const text = encodeURIComponent('Scopri 1OgniGiorno - prodotti straordinari ogni giorno!');
+        const text = encodeURIComponent('Scopri Il prodotto del giorno - prodotti straordinari ogni giorno!');
         const url = encodeURIComponent(window.location.origin);
         window.open(`https://wa.me/?text=${text}%20${url}`, '_blank');
         setIsShareModalOpen(false);
@@ -119,7 +119,7 @@ export default function Header() {
       color: 'from-blue-500 to-blue-600',
       action: () => {
         trackSocialShare('Telegram');
-        const text = encodeURIComponent('Scopri 1OgniGiorno - prodotti straordinari ogni giorno!');
+        const text = encodeURIComponent('Scopri Il prodotto del giorno - prodotti straordinari ogni giorno!');
         const url = encodeURIComponent(window.location.origin);
         window.open(`https://t.me/share/url?url=${url}&text=${text}`, '_blank');
         setIsShareModalOpen(false);
@@ -142,7 +142,7 @@ export default function Header() {
       color: 'from-gray-800 to-black',
       action: () => {
         trackSocialShare('Twitter');
-        const text = encodeURIComponent('Scopri 1OgniGiorno - prodotti straordinari ogni giorno!');
+        const text = encodeURIComponent('Scopri Il prodotto del giorno - prodotti straordinari ogni giorno!');
         const url = encodeURIComponent(window.location.origin);
         window.open(`https://twitter.com/intent/tweet?text=${text}&url=${url}`, '_blank');
         setIsShareModalOpen(false);
@@ -165,8 +165,8 @@ export default function Header() {
       color: 'from-gray-600 to-gray-700',
       action: () => {
         trackSocialShare('Email');
-        const subject = encodeURIComponent('Scopri 1OgniGiorno');
-        const body = encodeURIComponent(`Ciao!\n\nVolevo condividere con te 1OgniGiorno, una piattaforma che ogni giorno presenta un prodotto straordinario e lo trasforma in un fenomeno virale.\n\nDai un'occhiata: ${window.location.origin}`);
+        const subject = encodeURIComponent('Scopri Il prodotto del giorno');
+        const body = encodeURIComponent(`Ciao!\n\nVolevo condividere con te Il prodotto del giorno, una piattaforma che ogni giorno presenta un prodotto straordinario e lo trasforma in un fenomeno virale.\n\nDai un'occhiata: ${window.location.origin}`);
         window.open(`mailto:?subject=${subject}&body=${body}`);
         setIsShareModalOpen(false);
       }
@@ -206,12 +206,12 @@ export default function Header() {
               <div className="flex items-center gap-2">
                 <div className="relative">
                   <div className="w-8 h-8 bg-gradient-to-br from-blue-600 to-purple-600 rounded-lg flex items-center justify-center">
-                    <span className="text-white font-bold text-lg">1</span>
+                    <span className="text-white font-bold text-lg">{new Date().getDate()}</span>
                   </div>
                   {/* <div className="absolute -top-1 -right-1 w-3 h-3 bg-orange-400 rounded-full"></div> */}
                 </div>
-                <h1 className="text-xl sm:text-2xl font-black tracking-tight text-transparent bg-gradient-to-r from-gray-900 via-blue-800 to-purple-800 bg-clip-text">
-                  OgniGiorno
+                <h1 className="text-lg sm:text-xl font-medium tracking-tight text-transparent bg-gradient-to-r from-gray-900 via-blue-800 to-purple-800 bg-clip-text">
+                  IL PRODOTTO DEL GIORNO
                 </h1>
               </div>
             </Link>
@@ -273,12 +273,12 @@ export default function Header() {
                 <div className="flex items-center gap-2">
                   <div className="relative">
                     <div className="w-6 h-6 bg-gradient-to-br from-blue-600 to-purple-600 rounded-md flex items-center justify-center">
-                      <span className="text-white font-bold text-sm">1</span>
+                      <span className="text-white font-bold text-sm">{new Date().getDate()}</span>
                     </div>
                     <div className="absolute -top-1 -right-1 w-2 h-2 bg-orange-400 rounded-full"></div>
                   </div>
-                  <h2 className="text-lg font-black text-transparent bg-gradient-to-r from-gray-900 via-blue-800 to-purple-800 bg-clip-text">
-                    OgniGiorno
+                  <h2 className="text-base font-medium text-transparent bg-gradient-to-r from-gray-900 via-blue-800 to-purple-800 bg-clip-text">
+                    IL PRODOTTO DEL GIORNO
                   </h2>
                 </div>
                 <button
@@ -501,7 +501,7 @@ export default function Header() {
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-3">
                     <span className="text-2xl">🔗</span>
-                    <h3 className="text-lg font-semibold text-gray-900">Condividi 1OgniGiorno</h3>
+                    <h3 className="text-lg font-semibold text-gray-900">Condividi Il prodotto del giorno</h3>
                   </div>
                   <button
                     onClick={() => {
@@ -538,7 +538,7 @@ export default function Header() {
                 {/* Info aggiuntiva */}
                 <div className="mt-6 p-4 bg-gray-50 rounded-lg">
                   <p className="text-xs text-gray-600 text-center">
-                    Aiutaci a far scoprire 1OgniGiorno a più persone possibili.
+                    Aiutaci a far scoprire Il prodotto del giorno a più persone possibili.
                     <br />
                     Ogni condivisione conta! 🚀
                   </p>
