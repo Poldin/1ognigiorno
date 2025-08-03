@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useState } from "react";
-import { Menu, X, Loader, HelpCircle, Bell, Share2, PartyPopper, Rocket, CheckCircle } from "lucide-react";
+import { Menu, X, Loader, HelpCircle, Bell, Share2, PartyPopper, Rocket, CheckCircle, SquareChartGantt } from "lucide-react";
 import { trackButtonClick, trackModalOpen, trackModalClose, trackFormSubmission, trackSocialShare, trackSubscription } from "../lib/gtag";
 import { getDayNumber } from "../lib/getDayNumber";
 
@@ -108,11 +108,11 @@ export default function HeaderDark() {
               <div className="flex items-center gap-2">
                 <div className="relative">
                   <div className="w-10 h-10 bg-white rounded-md flex items-center justify-center">
-                    <span className="text-black text-lg">{getDayNumber()}</span>
+                    <span className="text-black text-lg font-spacegrotesk">{getDayNumber()}</span>
                   </div>
                   {/* <div className="absolute -top-1 -right-1 w-3 h-3 bg-orange-400 rounded-full"></div> */}
                 </div>
-                <h1 className="text-lg sm:text-xl font-medium tracking-tight text-white">
+                <h1 className="text-lg sm:text-xl font-medium tracking-tight text-white font-spacegrotesk">
                   IL PRODOTTO DEL GIORNO
                 </h1>
               </div>
@@ -120,6 +120,13 @@ export default function HeaderDark() {
             
             {/* Desktop CTA Buttons */}
             <div className="hidden md:flex items-center gap-3">
+              <Link 
+                href="/prodotti" 
+                onClick={() => trackButtonClick('Prodotti', 'Header Desktop')}
+                className="inline-flex items-center px-3 py-2 text-sm font-medium text-gray-300 hover:text-white transition-colors"
+              >
+                <SquareChartGantt className="w-4 h-4 mr-1" /> Prodotti
+              </Link>
               <Link 
                 href="/how" 
                 onClick={() => trackButtonClick('Come funziona', 'Header Desktop')}
@@ -173,10 +180,10 @@ export default function HeaderDark() {
                 <div className="flex items-center gap-2">
                   <div className="relative">
                     <div className="w-10 h-10 bg-white rounded-md flex items-center justify-center">
-                      <span className="text-black text-lg">{getDayNumber()}</span>
+                      <span className="text-black text-lg font-spacegrotesk">{getDayNumber()}</span>
                     </div>
                   </div>
-                  <h2 className="text-base font-medium text-white">
+                  <h2 className="text-base font-medium text-white font-spacegrotesk">
                     IL PRODOTTO DEL GIORNO
                   </h2>
                 </div>
@@ -190,6 +197,21 @@ export default function HeaderDark() {
 
               {/* Menu Content */}
               <div className="flex-1 px-2 py-8 space-y-6">
+                <Link 
+                  href="/prodotti" 
+                  className="flex items-center gap-4 p-4 rounded-sm bg-gray-800 border border-gray-700 text-white hover:bg-gray-700 transition-all duration-200"
+                  onClick={() => {
+                    trackButtonClick('Prodotti', 'Header Mobile');
+                    setIsMenuOpen(false);
+                  }}
+                >
+                  <SquareChartGantt className="w-6 h-6 text-gray-400" />
+                  <div>
+                    <div className="font-semibold">Prodotti</div>
+                    <div className="text-sm text-gray-400">Esplora tutti i prodotti</div>
+                  </div>
+                </Link>
+                
                 <Link 
                   href="/how" 
                   className="flex items-center gap-4 p-4 rounded-sm bg-gray-800 border border-gray-700 text-white hover:bg-gray-700 transition-all duration-200"
