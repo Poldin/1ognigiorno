@@ -71,7 +71,7 @@ export default function ProductPage() {
           {/* Mobile layout skeleton */}
           <div className="block lg:hidden space-y-6">
             <div className="w-3/4 h-8 bg-gray-800 rounded animate-pulse"></div>
-            <div className="aspect-square bg-gray-800 rounded-2xl animate-pulse"></div>
+            <div className="aspect-[9/16] bg-gray-800 rounded-2xl animate-pulse"></div>
             <div className="space-y-3">
               <div className="w-1/4 h-6 bg-gray-800 rounded animate-pulse"></div>
               <div className="space-y-2">
@@ -158,7 +158,7 @@ export default function ProductPage() {
           </h1>
           
           {/* Image */}
-          <div className="aspect-square bg-gray-800 rounded-2xl overflow-hidden">
+          <div className="aspect-[9/16] bg-gray-800 rounded-2xl overflow-hidden">
             {product.image_url ? (
               <Image
                 src={product.image_url}

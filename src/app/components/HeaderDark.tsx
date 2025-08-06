@@ -81,7 +81,7 @@ export default function HeaderDark() {
     const shareData = {
       title: 'Il prodotto del giorno - Scopri prodotti straordinari ogni giorno',
       text: 'La piattaforma che ogni giorno presenta un prodotto straordinario e lo trasforma in un fenomeno virale.',
-      url: window.location.origin
+      url: window.location.href
     };
 
     // Prova a usare l'API nativa di condivisione

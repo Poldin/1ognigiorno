@@ -14,6 +14,8 @@ export default function HomeContent() {
           <Image 
             src="https://oxmplkkoozzymomyspzg.supabase.co/storage/v1/object/public/images/knowledge.gif" 
             alt="Knowledge animation"
+            width={160}
+            height={160}
             className="mx-auto max-w-24 sm:max-w-32 md:max-w-40 w-full h-auto rounded-lg"
           />
         </div>
