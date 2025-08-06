@@ -3,8 +3,7 @@
 import Header from "./components/Header";
 import Footer from "./components/Footer";
 import HomeContent from "./components/HomeContent";
-import { trackButtonClick } from "./lib/gtag";
-import { useScrollTracking, useSectionTracking, usePageTracking } from "./lib/useAnalytics";
+import { useScrollTracking, usePageTracking } from "./lib/useAnalytics";
 
 export default function Home() {
   // Analytics tracking

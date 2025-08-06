@@ -29,3 +29,23 @@ body {
 .font-spacegrotesk {
   font-family: var(--font-space-grotesk), 'Space Grotesk', sans-serif !important;
 }
+
+/* Marquee animation for scrolling text */
+@keyframes marquee {
+  0% {
+    transform: translateX(0%);
+  }
+  100% {
+    transform: translateX(-100%);
+  }
+}
+
+/* Continuous loop marquee animation */
+@keyframes marquee-loop {
+  0% {
+    transform: translateX(0%);
+  }
+  100% {
+    transform: translateX(-50%);
+  }
+}

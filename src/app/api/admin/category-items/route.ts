@@ -39,7 +39,7 @@ export async function GET(request: NextRequest) {
 // POST - Create new category item
 export async function POST(request: NextRequest) {
   try {
-    const { name, image_url, is_public, category_id } = await request.json();
+    const { name, image_url, is_public, category_id, description } = await request.json();
 
     // Validate required fields
     if (!name || !category_id) {
@@ -71,6 +71,7 @@ export async function POST(request: NextRequest) {
           image_url: image_url || null,
           is_public: is_public !== undefined ? is_public : true,
           category_id,
+          description: description || null,
         }
       ])
       .select()
@@ -97,7 +98,7 @@ export async function POST(request: NextRequest) {
 // PUT - Update category item
 export async function PUT(request: NextRequest) {
   try {
-    const { id, name, image_url, is_public, category_id } = await request.json();
+    const { id, name, image_url, is_public, category_id, description } = await request.json();
 
     // Validate required fields
     if (!id) {
@@ -123,11 +124,12 @@ export async function PUT(request: NextRequest) {
       }
     }
 
-    const updateData: Partial<{ name: string; image_url: string | null; is_public: boolean; category_id: string }> = {};
+    const updateData: Partial<{ name: string; image_url: string | null; is_public: boolean; category_id: string; description: string | null }> = {};
     if (name !== undefined) updateData.name = name;
     if (image_url !== undefined) updateData.image_url = image_url;
     if (is_public !== undefined) updateData.is_public = is_public;
     if (category_id !== undefined) updateData.category_id = category_id;
+    if (description !== undefined) updateData.description = description;
 
     const { data: updatedItem, error } = await supabase
       .from('products_categories_items')

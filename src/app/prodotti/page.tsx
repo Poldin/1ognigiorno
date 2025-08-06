@@ -8,6 +8,7 @@ import { useScrollTracking, useSectionTracking, usePageTracking } from "../lib/u
 import { useState, useEffect } from "react";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { Tables } from "../lib/database.types";
+import { useRouter } from "next/navigation";
 
 // Types for the data from API
 type CoverItem = Tables<'products_cover_items'>;
@@ -31,6 +32,7 @@ export default function Prodotti() {
   const [pageData, setPageData] = useState<PageData | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const router = useRouter();
   
   // Analytics tracking
   useScrollTracking();
@@ -83,9 +85,9 @@ export default function Prodotti() {
     setCurrentHeroIndex((prev) => (prev - 1 + pageData.coverItems.length) % pageData.coverItems.length);
   };
 
-  const handleProductClick = (productName: string, location: string) => {
+  const handleProductClick = (product: CategoryItem | CoverItem, productName: string, location: string) => {
     trackButtonClick(productName, location);
-    // TODO: Navigate to product detail
+    router.push(`/prodotti/${product.id}`);
   };
 
   // Touch handlers per swipe su mobile
@@ -231,7 +233,7 @@ export default function Prodotti() {
               className={`absolute inset-0 transition-opacity duration-1000 ${
                 index === currentHeroIndex ? 'opacity-100' : 'opacity-0'
               }`}
-              onClick={() => handleProductClick(item.name || 'Prodotto', 'Hero Carousel')}
+              onClick={() => handleProductClick(item, item.name || 'Prodotto', 'Hero Carousel')}
             >
               {/* Background Image */}
               {item.image_url ? (
@@ -246,8 +248,7 @@ export default function Prodotti() {
                 <div className="absolute inset-0 bg-gradient-to-br from-gray-800 via-gray-700 to-gray-600"></div>
               )}
               
-              {/* Overlay */}
-              <div className="absolute inset-0 bg-black/40"></div>
+
               
               {/* Content */}
               <div className="relative z-10 h-full flex items-center justify-center cursor-pointer">
@@ -274,13 +275,15 @@ export default function Prodotti() {
         </button>
 
         {/* Dots Indicator */}
-        <div className="absolute bottom-6 left-1/2 -translate-x-1/2 flex gap-2 z-20">
+        <div className="absolute bottom-6 left-1/2 -translate-x-1/2 flex gap-2 z-20 bg-black/30 backdrop-blur-sm px-3 py-2 rounded-full">
           {pageData.coverItems.map((_, index) => (
             <button
               key={index}
               onClick={() => setCurrentHeroIndex(index)}
-              className={`w-2 h-2 rounded-full transition-colors ${
-                index === currentHeroIndex ? 'bg-white' : 'bg-white/40'
+              className={`transition-all duration-300 ${
+                index === currentHeroIndex 
+                  ? 'w-6 h-2 bg-white rounded-full' 
+                  : 'w-2 h-2 bg-white/60 rounded-full hover:bg-white/80'
               }`}
             />
           ))}
@@ -324,7 +327,7 @@ export default function Prodotti() {
                   {category.products.map((product) => (
                     <div
                       key={product.id}
-                      onClick={() => handleProductClick(product.name || 'Prodotto', `Category: ${category.name}`)}
+                      onClick={() => handleProductClick(product, product.name || 'Prodotto', `Category: ${category.name}`)}
                       className="flex-shrink-0 w-64 bg-gray-800 rounded-lg overflow-hidden cursor-pointer"
                     >
                       <div className="aspect-[3/4] bg-gradient-to-br from-gray-700 to-gray-800 relative overflow-hidden">
@@ -343,9 +346,29 @@ export default function Prodotti() {
                       </div>
                       
                       <div className="p-4">
-                        <h3 className="font-semibold text-white line-clamp-1">
-                          {product.name || 'Prodotto'}
-                        </h3>
+                        <div className="overflow-hidden relative group">
+                          {(product.name || 'Prodotto').length > 25 ? (
+                            <h3 className="font-semibold text-white whitespace-nowrap">
+                              <div 
+                                className="inline-block group-hover:animate-none"
+                                style={{
+                                  animation: 'marquee-loop 15s linear infinite'
+                                }}
+                              >
+                                <span className="inline-block pr-8">
+                                  {product.name || 'Prodotto'}
+                                </span>
+                                <span className="inline-block pr-8">
+                                  {product.name || 'Prodotto'}
+                                </span>
+                              </div>
+                            </h3>
+                          ) : (
+                            <h3 className="font-semibold text-white">
+                              {product.name || 'Prodotto'}
+                            </h3>
+                          )}
+                        </div>
                       </div>
                     </div>
                   ))}

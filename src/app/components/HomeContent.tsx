@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { trackButtonClick } from "../lib/gtag";
 import { HelpCircle, SquareChartGantt } from "lucide-react";
+import Image from "next/image";
 
 export default function HomeContent() {
   return (
@@ -10,7 +11,7 @@ export default function HomeContent() {
       <div className="text-center">
         {/* GIF */}
         <div className="mb-12">
-          <img 
+          <Image 
             src="https://oxmplkkoozzymomyspzg.supabase.co/storage/v1/object/public/images/knowledge.gif" 
             alt="Knowledge animation"
             className="mx-auto max-w-24 sm:max-w-32 md:max-w-40 w-full h-auto rounded-lg"

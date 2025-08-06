@@ -25,6 +25,7 @@ interface CategoryItemForm {
   image_url: string | null;
   is_public: boolean;
   category_id: string;
+  description: string;
 }
 
 export default function CategoriesManagePage() {
@@ -167,7 +168,14 @@ export default function CategoriesManagePage() {
         throw new Error(data.error || 'Failed to update category');
       }
 
-      await fetchCategories();
+      // Update only the specific category in state
+      setCategories(prevCategories => 
+        prevCategories.map(cat => 
+          cat.id === category.id 
+            ? { ...cat, is_public: !cat.is_public }
+            : cat
+        )
+      );
     } catch (err) {
       console.error('Error toggling category public status:', err);
       alert(err instanceof Error ? err.message : 'Failed to update category');
@@ -181,6 +189,7 @@ export default function CategoriesManagePage() {
       image_url: null,
       is_public: true,
       category_id: categoryId,
+      description: '',
     });
     setModalType('item');
     setIsModalOpen(true);
@@ -193,6 +202,7 @@ export default function CategoriesManagePage() {
       image_url: item.image_url,
       is_public: item.is_public ?? true,
       category_id: item.category_id || '',
+      description: item.description || '',
     });
     setModalType('item');
     setIsModalOpen(true);
@@ -272,7 +282,17 @@ export default function CategoriesManagePage() {
         throw new Error(data.error || 'Failed to update item');
       }
 
-      await fetchCategories();
+      // Update only the specific item in the specific category
+      setCategories(prevCategories => 
+        prevCategories.map(category => ({
+          ...category,
+          items: category.items.map(categoryItem => 
+            categoryItem.id === item.id 
+              ? { ...categoryItem, is_public: !categoryItem.is_public }
+              : categoryItem
+          )
+        }))
+      );
     } catch (err) {
       console.error('Error toggling item public status:', err);
       alert(err instanceof Error ? err.message : 'Failed to update item');
@@ -611,19 +631,20 @@ export default function CategoriesManagePage() {
       {isModalOpen && modalType === 'item' && editingItem && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
           <div className="bg-white rounded-lg max-w-md w-full max-h-[90vh] overflow-y-auto">
-            <div className="flex items-center justify-between p-6 border-b">
-              <h2 className="text-lg font-semibold text-gray-900">
-                {editingItem.id ? 'Modifica Prodotto' : 'Nuovo Prodotto'}
-              </h2>
-              <button
-                onClick={handleCloseModal}
-                className="p-1 text-gray-400 hover:text-gray-600"
-              >
-                <X className="h-5 w-5" />
-              </button>
-            </div>
-
             <div className="p-6 space-y-6">
+              {/* Header */}
+              <div className="flex items-center justify-between mb-6">
+                <h2 className="text-lg font-semibold text-gray-900">
+                  {editingItem.id ? 'Modifica Prodotto' : 'Nuovo Prodotto'}
+                </h2>
+                <button
+                  onClick={handleCloseModal}
+                  className="p-1 text-gray-400 hover:text-gray-600"
+                >
+                  <X className="h-5 w-5" />
+                </button>
+              </div>
+
               {/* Name */}
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">
@@ -644,6 +665,20 @@ export default function CategoriesManagePage() {
                 onImageChange={(imageUrl) => setEditingItem({ ...editingItem, image_url: imageUrl })}
                 disabled={saving}
               />
+
+              {/* Description */}
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Descrizione
+                </label>
+                <textarea
+                  value={editingItem.description}
+                  onChange={(e) => setEditingItem({ ...editingItem, description: e.target.value })}
+                  rows={4}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-gray-900 resize-vertical"
+                  placeholder="Inserisci la descrizione del prodotto (opzionale)"
+                />
+              </div>
 
               {/* Public Toggle */}
               <div className="flex items-center justify-between">
@@ -672,10 +707,9 @@ export default function CategoriesManagePage() {
                   : 'Questo prodotto sarà nascosto dal sito'
                 }
               </p>
-            </div>
 
-            {/* Footer */}
-            <div className="flex gap-3 p-6 bg-gray-50 border-t">
+              {/* Footer */}
+              <div className="flex gap-3 pt-6 border-t mt-6">
               <button
                 onClick={handleCloseModal}
                 disabled={saving}
@@ -692,6 +726,7 @@ export default function CategoriesManagePage() {
                 <Save className="h-4 w-4" />
                 {saving ? 'Salvando...' : 'Salva'}
               </button>
+              </div>
             </div>
           </div>
         </div>
