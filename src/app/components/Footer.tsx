@@ -12,7 +12,7 @@ export default function Footer() {
                 <span className="text-white text-lg">{getDayNumber()}</span>
               </div>
             </div>
-            <h3 className="text-lg font-medium tracking-tight text-gray-800">
+            <h3 className="text-lg font-medium tracking-tight text-gray-800 font-spacegrotesk">
               IL PRODOTTO DEL GIORNO
             </h3>
           </Link>
