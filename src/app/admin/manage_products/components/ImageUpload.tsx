@@ -145,7 +145,7 @@ export default function ImageUpload({
         <button
           onClick={handleClick}
           disabled={uploading}
-          className="w-full px-4 py-2 border border-gray-300 rounded-md text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
+          className="w-fit px-4 py-2 border border-gray-300 rounded-md text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
           type="button"
         >
           {uploading ? 'Caricamento...' : 'Cambia immagine'}

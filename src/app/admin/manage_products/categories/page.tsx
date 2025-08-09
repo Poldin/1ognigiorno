@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { Plus, Edit2, Trash2, Eye, EyeOff, Save, X, ChevronDown, ChevronRight } from "lucide-react";
 import Image from "next/image";
 import ImageUpload from "../components/ImageUpload";
@@ -38,6 +38,8 @@ export default function CategoriesManagePage() {
   const [editingItem, setEditingItem] = useState<CategoryItemForm | null>(null);
   const [saving, setSaving] = useState(false);
   const [expandedCategories, setExpandedCategories] = useState<Set<string>>(new Set());
+  const descriptionRef = useRef<HTMLTextAreaElement | null>(null);
+  const [initializedDesktopExpand, setInitializedDesktopExpand] = useState(false);
 
   // Fetch categories with items
   const fetchCategories = async () => {
@@ -63,6 +65,16 @@ export default function CategoriesManagePage() {
     fetchCategories();
   }, []);
 
+  // On desktop only, expand all categories by default on first load
+  useEffect(() => {
+    if (initializedDesktopExpand || categories.length === 0) return;
+    const isDesktop = typeof window !== 'undefined' && window.matchMedia('(min-width: 1024px)').matches;
+    if (isDesktop) {
+      setExpandedCategories(new Set(categories.map((c) => c.id)));
+    }
+    setInitializedDesktopExpand(true);
+  }, [initializedDesktopExpand, categories]);
+
   // Toggle category expansion
   const toggleCategory = (categoryId: string) => {
     const newExpanded = new Set(expandedCategories);
@@ -73,6 +85,17 @@ export default function CategoriesManagePage() {
     }
     setExpandedCategories(newExpanded);
   };
+
+  // Auto-size description textarea when the modal opens or text changes
+  useEffect(() => {
+    if (isModalOpen && modalType === 'item' && descriptionRef.current) {
+      const el = descriptionRef.current;
+      // Reset then grow up to 60% of viewport height
+      el.style.height = 'auto';
+      const maxPx = Math.floor(window.innerHeight * 0.6);
+      el.style.height = `${Math.min(el.scrollHeight, maxPx)}px`;
+    }
+  }, [isModalOpen, modalType, editingItem?.description]);
 
   // Category management
   const handleAddCategory = () => {
@@ -630,7 +653,7 @@ export default function CategoriesManagePage() {
       {/* Modal for Category Item */}
       {isModalOpen && modalType === 'item' && editingItem && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
-          <div className="bg-white rounded-lg max-w-md w-full max-h-[90vh] overflow-y-auto">
+          <div className="bg-white rounded-lg w-full max-h-[90vh] overflow-y-auto">
             <div className="p-6 space-y-6">
               {/* Header */}
               <div className="flex items-center justify-between mb-6">
@@ -654,7 +677,7 @@ export default function CategoriesManagePage() {
                   type="text"
                   value={editingItem.name}
                   onChange={(e) => setEditingItem({ ...editingItem, name: e.target.value })}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-gray-900"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-gray-900 max-w-2xl"
                   placeholder="Inserisci il nome del prodotto"
                 />
               </div>
@@ -672,17 +695,25 @@ export default function CategoriesManagePage() {
                   Descrizione
                 </label>
                 <textarea
+                  ref={descriptionRef}
                   value={editingItem.description}
-                  onChange={(e) => setEditingItem({ ...editingItem, description: e.target.value })}
+                  onChange={(e) => {
+                    setEditingItem({ ...editingItem, description: e.target.value });
+                    // Auto-grow height while typing
+                    const el = e.currentTarget;
+                    el.style.height = 'auto';
+                    const maxPx = Math.floor(window.innerHeight * 0.6);
+                    el.style.height = `${Math.min(el.scrollHeight, maxPx)}px`;
+                  }}
                   rows={4}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-gray-900 resize-vertical"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-gray-900 resize-none min-h-28 max-h-[60vh] overflow-auto"
                   placeholder="Inserisci la descrizione del prodotto (opzionale)"
                 />
               </div>
 
               {/* Public Toggle */}
-              <div className="flex items-center justify-between">
-                <label className="text-sm font-medium text-gray-700">
+              <div className="flex items-center">
+                <label className="text-sm font-medium text-gray-700 mr-2">
                   Stato di pubblicazione
                 </label>
                 <button
@@ -703,8 +734,8 @@ export default function CategoriesManagePage() {
               {/* Status Text */}
               <p className="text-sm text-gray-600">
                 {editingItem.is_public 
-                  ? 'Questo prodotto sarà visibile sul sito' 
-                  : 'Questo prodotto sarà nascosto dal sito'
+                  ? 'Questo prodotto è visibile sul sito' 
+                  : 'Questo prodotto è nascosto dal sito'
                 }
               </p>
 
@@ -713,14 +744,14 @@ export default function CategoriesManagePage() {
               <button
                 onClick={handleCloseModal}
                 disabled={saving}
-                className="flex-1 px-4 py-2 text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50 disabled:opacity-50"
+                className="w-fit px-4 py-2 text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50 disabled:opacity-50"
               >
                 Annulla
               </button>
               <button
                 onClick={handleSaveItem}
                 disabled={saving || !editingItem.name.trim()}
-                className="flex-1 flex items-center justify-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 disabled:opacity-50"
+                className="w-fit flex items-center justify-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 disabled:opacity-50"
               >
                 {saving && <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>}
                 <Save className="h-4 w-4" />

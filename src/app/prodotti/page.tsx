@@ -136,6 +136,9 @@ export default async function Prodotti() {
   try {
     const pageData = await getPageData();
 
+    console.log('PRODOTTI COUNT:', pageData.categories.reduce((sum, cat) => sum + cat.products.length, 0));
+
+
     return (
       <div className="min-h-screen bg-gray-950 text-white">
         <HeaderDark />
