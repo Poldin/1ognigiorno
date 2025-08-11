@@ -120,7 +120,7 @@ export async function generateMetadata(): Promise<Metadata> {
         description: `Scopri la nostra collezione completa di prodotti`
       }
     };
-  } catch (error) {
+  } catch {
     // Fallback metadata in case of error
     return {
       title: 'Prodotti - Catalogo Completo',

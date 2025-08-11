@@ -1,4 +1,3 @@
-import Image from "next/image";
 import HeaderDark from "../../components/HeaderDark";
 import FooterDark from "../../components/FooterDark";
 import { Tables } from "../../lib/database.types";

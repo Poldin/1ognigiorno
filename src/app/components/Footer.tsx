@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { getDayNumber } from "../lib/getDayNumber";
+import CtaLinks from "./CtaLinks";
 
 export default function Footer() {
   return (
@@ -16,8 +17,21 @@ export default function Footer() {
               IL PRODOTTO DEL GIORNO
             </h3>
           </Link>
+          <CtaLinks variant="light" contextLabel="Footer" />
           <p className="text-gray-600 mb-4">
-            La piattaforma che ogni giorno scopre, valorizza e rende virali prodotti eccezionali che meritano di essere conosciuti dal mondo.
+          La piattaforma che ogni giorno scopre, valorizza e condivide prodotti che meritano di essere conosciuti.
+          </p>
+          <p className="text-gray-600">
+            Vuoi segnalarci un prodotto che merita di essere incluso? Scrivici una mail a{" "}
+            <a
+              href="mailto:scrivici@ilprodottodelgiorno.it"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-gray-800 underline hover:text-gray-900"
+            >
+              scrivici@ilprodottodelgiorno.it
+            </a>
+            .
           </p>
         </div>
         
