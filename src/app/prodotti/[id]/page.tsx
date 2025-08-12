@@ -5,6 +5,7 @@ import { supabase } from "../../lib/supabase";
 import { Metadata } from "next";
 import { notFound } from "next/navigation";
 import ProductClient from "./ProductClient";
+// removed headers to keep ISR static
 
 type CategoryItem = Tables<'products_categories_items'>;
 type CoverItem = Tables<'products_cover_items'>;

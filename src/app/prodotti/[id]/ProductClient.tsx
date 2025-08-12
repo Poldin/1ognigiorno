@@ -24,7 +24,7 @@ export default function ProductClient({ product }: ProductClientProps) {
   usePageTracking(`product-${product.id}`);
 
   const handleBackClick = () => {
-    trackButtonClick('Back to Products', 'Product Page');
+    trackButtonClick('Back', 'Product Page');
     router.push('/prodotti');
   };
 
@@ -36,7 +36,7 @@ export default function ProductClient({ product }: ProductClientProps) {
         className="flex items-center gap-2 mb-8 px-4 py-2 bg-gray-800 hover:bg-gray-700 rounded-lg transition-colors"
       >
         <ArrowLeft className="w-4 h-4" />
-        <span>torna ai prodotti</span>
+        <span>indietro</span>
       </button>
 
       {/* Mobile Layout */}

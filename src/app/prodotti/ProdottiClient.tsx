@@ -1,6 +1,7 @@
 "use client";
 
 import Image from "next/image";
+import Link from "next/link";
 import { trackButtonClick } from "../lib/gtag";
 import { useScrollTracking, useSectionTracking, usePageTracking } from "../lib/useAnalytics";
 import { useState, useEffect } from "react";
@@ -186,7 +187,7 @@ export default function ProdottiClient({ pageData }: ProdottiClientProps) {
           {pageData.categories.map((category, categoryIndex) => (
             <div key={category.id} className="mb-6">
               <div className="flex items-center justify-between mb-6">
-                <div className="flex items-center gap-2">
+                <Link href={`/categorie/${category.id}`} className="flex items-center gap-2 group">
                   {category.expertImageUrl ? (
                     <div className="relative w-7 h-7 rounded-full overflow-hidden border border-white/10">
                       <Image
@@ -197,10 +198,10 @@ export default function ProdottiClient({ pageData }: ProdottiClientProps) {
                       />
                     </div>
                   ) : null}
-                  <h2 className="text-2xl md:text-3xl font-medium text-white">
+                  <h2 className="text-2xl md:text-3xl font-medium text-white group-hover:underline">
                     {category.name}
                   </h2>
-                </div>
+                </Link>
                 
                 {/* Desktop Navigation Arrows */}
                 <div className="hidden md:flex gap-2">

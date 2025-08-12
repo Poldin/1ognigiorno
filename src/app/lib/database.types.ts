@@ -46,6 +46,7 @@ export type Database = {
           is_public: boolean | null
           name: string | null
           expert_id: string | null
+          category_description: string | null
         }
         Insert: {
           created_at?: string
@@ -53,6 +54,7 @@ export type Database = {
           is_public?: boolean | null
           name?: string | null
           expert_id?: string | null
+          category_description?: string | null
         }
         Update: {
           created_at?: string
@@ -60,6 +62,7 @@ export type Database = {
           is_public?: boolean | null
           name?: string | null
           expert_id?: string | null
+          category_description?: string | null
         }
         Relationships: [
           {
