@@ -45,20 +45,31 @@ export type Database = {
           id: string
           is_public: boolean | null
           name: string | null
+          expert_id: string | null
         }
         Insert: {
           created_at?: string
           id?: string
           is_public?: boolean | null
           name?: string | null
+          expert_id?: string | null
         }
         Update: {
           created_at?: string
           id?: string
           is_public?: boolean | null
           name?: string | null
+          expert_id?: string | null
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "products_categories_expert_id_fkey"
+            columns: ["expert_id"]
+            isOneToOne: false
+            referencedRelation: "profile"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       products_categories_items: {
         Row: {
@@ -127,6 +138,7 @@ export type Database = {
           created_at: string
           edited_at: string | null
           id: string
+          img_url: string | null
           role: Database["public"]["Enums"]["user_role"] | null
           user_id: string | null
         }
@@ -134,6 +146,7 @@ export type Database = {
           created_at?: string
           edited_at?: string | null
           id?: string
+          img_url?: string | null
           role?: Database["public"]["Enums"]["user_role"] | null
           user_id?: string | null
         }
@@ -141,6 +154,7 @@ export type Database = {
           created_at?: string
           edited_at?: string | null
           id?: string
+          img_url?: string | null
           role?: Database["public"]["Enums"]["user_role"] | null
           user_id?: string | null
         }

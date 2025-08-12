@@ -15,6 +15,7 @@ type CategoryItem = Tables<'products_categories_items'>;
 
 interface CategoryWithProducts extends Category {
   products: CategoryItem[];
+  expertImageUrl?: string | null;
 }
 
 interface PageData {
@@ -185,9 +186,21 @@ export default function ProdottiClient({ pageData }: ProdottiClientProps) {
           {pageData.categories.map((category, categoryIndex) => (
             <div key={category.id} className="mb-6">
               <div className="flex items-center justify-between mb-6">
-                <h2 className="text-2xl md:text-3xl font-medium text-white">
-                  {category.name}
-                </h2>
+                <div className="flex items-center gap-2">
+                  {category.expertImageUrl ? (
+                    <div className="relative w-7 h-7 rounded-full overflow-hidden border border-white/10">
+                      <Image
+                        src={category.expertImageUrl}
+                        alt={`Responsabile di ${category.name ?? 'categoria'}`}
+                        fill
+                        className="object-cover"
+                      />
+                    </div>
+                  ) : null}
+                  <h2 className="text-2xl md:text-3xl font-medium text-white">
+                    {category.name}
+                  </h2>
+                </div>
                 
                 {/* Desktop Navigation Arrows */}
                 <div className="hidden md:flex gap-2">

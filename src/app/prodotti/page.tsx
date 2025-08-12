@@ -13,6 +13,7 @@ type CategoryItem = Tables<'products_categories_items'>;
 
 interface CategoryWithProducts extends Category {
   products: CategoryItem[];
+  expertImageUrl?: string | null;
 }
 
 interface PageData {
@@ -73,10 +74,34 @@ async function getPageData(): Promise<PageData> {
       return acc;
     }, {} as Record<string, typeof categoryItems>);
 
-    // Create final categories structure with their items
+    // Fetch experts' profile images for categories that have an expert_id
+    const expertIds = Array.from(
+      new Set((categories || []).map(c => c.expert_id).filter((id): id is string => Boolean(id)))
+    );
+
+    let expertProfiles: { id: string; img_url: string | null }[] = [];
+    if (expertIds.length > 0) {
+      const { data: profilesData, error: profilesError } = await supabase
+        .from('profile')
+        .select('id, img_url')
+        .in('id', expertIds);
+      if (profilesError) {
+        console.error('Error fetching expert profiles:', profilesError);
+      } else {
+        expertProfiles = profilesData || [];
+      }
+    }
+
+    const expertIdToImageUrl = expertProfiles.reduce<Record<string, string | null>>((acc, p) => {
+      acc[p.id] = p.img_url ?? null;
+      return acc;
+    }, {});
+
+    // Create final categories structure with their items and expert image
     const categoriesWithItems = (categories || []).map(category => ({
       ...category,
-      products: groupedItems[category.id] || []
+      products: groupedItems[category.id] || [],
+      expertImageUrl: category.expert_id ? expertIdToImageUrl[category.expert_id] ?? null : null,
     }));
 
     return {
