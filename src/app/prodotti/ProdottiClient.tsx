@@ -10,7 +10,13 @@ import { Tables } from "../lib/database.types";
 import { useRouter } from "next/navigation";
 
 // Types for the data from API
-type CoverItem = Tables<'products_cover_items'>;
+type CoverItem = Tables<'products_cover_items'> & {
+  associated_product?: {
+    id: string;
+    slug: string | null;
+    name: string | null;
+  } | null;
+};
 type Category = Tables<'products_categories'>;
 type CategoryItem = Tables<'products_categories_items'>;
 
@@ -64,7 +70,22 @@ export default function ProdottiClient({ pageData }: ProdottiClientProps) {
 
   const handleProductClick = (product: CategoryItem | CoverItem, productName: string, location: string) => {
     trackButtonClick(productName, location);
-    router.push(`/prodotti/${product.id}`);
+    
+    // Handle CategoryItem (regular products)
+    if ('slug' in product && product.slug !== undefined) {
+      const categoryProduct = product as CategoryItem;
+      const urlParam = categoryProduct.slug || categoryProduct.id;
+      router.push(`/prodotti/${urlParam}`);
+      return;
+    }
+    
+    // Handle CoverItem (cover images)
+    const coverItem = product as CoverItem;
+    if (coverItem.associated_product) {
+      const urlParam = coverItem.associated_product.slug || coverItem.associated_product.id;
+      router.push(`/prodotti/${urlParam}`);
+    }
+    // If no associated product, do nothing (image not clickable)
   };
 
   // Touch handlers per swipe su mobile
@@ -126,7 +147,7 @@ export default function ProdottiClient({ pageData }: ProdottiClientProps) {
               className={`absolute inset-0 transition-opacity duration-1000 ${
                 index === currentHeroIndex ? 'opacity-100' : 'opacity-0'
               }`}
-              onClick={() => handleProductClick(item, item.name || 'Prodotto', 'Hero Carousel')}
+              onClick={item.associated_product ? () => handleProductClick(item, item.name || 'Prodotto', 'Hero Carousel') : undefined}
             >
               {/* Background Image */}
               {item.image_url ? (
@@ -187,7 +208,7 @@ export default function ProdottiClient({ pageData }: ProdottiClientProps) {
           {pageData.categories.map((category, categoryIndex) => (
             <div key={category.id} className="mb-6">
               <div className="flex items-center justify-between mb-6">
-                <Link href={`/categorie/${category.id}`} className="flex items-center gap-2 group">
+                <Link href={`/categorie/${category.slug || category.id}`} className="flex items-center gap-2 group">
                   {category.expertImageUrl ? (
                     <div className="relative w-7 h-7 rounded-full overflow-hidden border border-white/10">
                       <Image

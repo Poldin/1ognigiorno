@@ -12,14 +12,27 @@ type CoverItem = Tables<'products_cover_items'>;
 
 /**
  * Server-side data fetching for individual products
+ * Supports both slug and id lookup for SEO-friendly URLs
  */
-async function getProduct(id: string): Promise<CategoryItem | CoverItem | null> {
+async function getProduct(slugOrId: string): Promise<CategoryItem | CoverItem | null> {
   try {
-    // First try to find in category items
+    // First try to find in category items by slug
+    const { data: categoryProductBySlug, error: categorySlugError } = await supabase
+      .from('products_categories_items')
+      .select('*')
+      .eq('slug', slugOrId)
+      .eq('is_public', true)
+      .single();
+
+    if (categoryProductBySlug && !categorySlugError) {
+      return categoryProductBySlug;
+    }
+
+    // If not found by slug, try by id in category items
     const { data: categoryProduct, error: categoryError } = await supabase
       .from('products_categories_items')
       .select('*')
-      .eq('id', id)
+      .eq('id', slugOrId)
       .eq('is_public', true)
       .single();
 
@@ -27,11 +40,11 @@ async function getProduct(id: string): Promise<CategoryItem | CoverItem | null> 
       return categoryProduct;
     }
 
-    // If not found in category items, try cover items
+    // If not found in category items, try cover items (only by id, cover items don't have slugs)
     const { data: coverProduct, error: coverError } = await supabase
       .from('products_cover_items')
       .select('*')
-      .eq('id', id)
+      .eq('id', slugOrId)
       .eq('is_public', true)
       .single();
 
@@ -40,9 +53,12 @@ async function getProduct(id: string): Promise<CategoryItem | CoverItem | null> 
       const productForPage = {
         ...coverProduct,
         category_id: null,
-        description: null // Cover items don't have descriptions
+        description: null, // Cover items don't have descriptions
+        slug: null // Cover items don't have slugs
       };
-      return productForPage as CategoryItem;
+      // Remove properties that don't exist in CategoryItem
+      const { order, product_id, ...categoryItemFormat } = productForPage;
+      return categoryItemFormat as CategoryItem;
     }
 
     return null;
@@ -54,16 +70,17 @@ async function getProduct(id: string): Promise<CategoryItem | CoverItem | null> 
 
 /**
  * Generate static params for all products (ISR)
+ * Uses slug when available for SEO, fallback to id
  */
 export async function generateStaticParams() {
   try {
-    // Get all category items
+    // Get all category items with slug and id
     const { data: categoryItems } = await supabase
       .from('products_categories_items')
-      .select('id')
+      .select('id, slug')
       .eq('is_public', true);
 
-    // Get all cover items
+    // Get all cover items (only id, no slug)
     const { data: coverItems } = await supabase
       .from('products_cover_items')
       .select('id')
@@ -71,12 +88,14 @@ export async function generateStaticParams() {
 
     const params = [];
 
-    // Add category items
+    // Add category items - use slug if available, otherwise id
     if (categoryItems) {
-      params.push(...categoryItems.map(item => ({ id: item.id })));
+      params.push(...categoryItems.map(item => ({ 
+        id: item.slug || item.id 
+      })));
     }
 
-    // Add cover items
+    // Add cover items - only id available
     if (coverItems) {
       params.push(...coverItems.map(item => ({ id: item.id })));
     }

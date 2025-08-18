@@ -156,7 +156,7 @@ export default function HeaderDark() {
                   <HelpCircle className="w-6 h-6 text-gray-400" />
                   <div>
                     <div className="font-semibold">Scopri</div>
-                    <div className="text-sm text-gray-400">Scopri di più su OgniGiorno</div>
+                    <div className="text-sm text-gray-400">Scopri di più su Il Prodotto del Giorno</div>
                   </div>
                 </Link>
                 

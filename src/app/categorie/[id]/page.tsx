@@ -10,6 +10,7 @@ import { notFound } from "next/navigation";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import remarkBreaks from "remark-breaks";
+import DescriptionToggle from "./DescriptionToggle";
 
 type Category = Tables<'products_categories'>;
 type CategoryItem = Tables<'products_categories_items'>;
@@ -19,20 +20,37 @@ interface CategoryPageData {
   products: CategoryItem[];
 }
 
-async function getCategoryData(categoryId: string): Promise<CategoryPageData | null> {
-  // Fetch category
-  const { data: category, error: categoryError } = await supabase
+async function getCategoryData(slugOrId: string): Promise<CategoryPageData | null> {
+  // First try to find category by slug
+  const { data: categoryBySlug, error: categorySlugError } = await supabase
     .from('products_categories')
     .select('*')
-    .eq('id', categoryId)
+    .eq('slug', slugOrId)
     .eq('is_public', true)
     .single();
 
-  if (categoryError || !category) {
-    return null;
+  let category = categoryBySlug;
+  
+  // If not found by slug, try by id
+  if (categorySlugError || !categoryBySlug) {
+    const { data: categoryById, error: categoryIdError } = await supabase
+      .from('products_categories')
+      .select('*')
+      .eq('id', slugOrId)
+      .eq('is_public', true)
+      .single();
+    
+    if (categoryIdError || !categoryById) {
+      return null;
+    }
+    category = categoryById;
   }
 
   // Fetch products for this category
+  if (!category) {
+    return null;
+  }
+  
   const { data: products, error: productsError } = await supabase
     .from('products_categories_items')
     .select('*')
@@ -99,15 +117,15 @@ export default async function CategoriaPage({ params }: { params: Promise<{ id: 
         </Link>
 
         {/* Hero section with expert avatar, title, description */}
-        <div className="flex flex-col items-center text-center gap-4 mb-8">
+        <div className="flex flex-col items-center text-center gap-6 mb-12">
           {category.expertImageUrl ? (
-            <div className="relative w-28 h-28 md:w-32 md:h-32 rounded-full overflow-hidden border border-white/10">
+            <div className="relative w-40 h-40 md:w-48 md:h-48 rounded-full overflow-hidden border-2 border-white/20 shadow-2xl">
               <Image src={category.expertImageUrl} alt="Responsabile categoria" fill className="object-cover" />
             </div>
           ) : null}
           <h1 className="text-3xl md:text-5xl font-medium">{category.name}</h1>
           {category.category_description ? (
-            <div className="prose prose-invert max-w-3xl text-left">
+            <DescriptionToggle>
               <ReactMarkdown
                 remarkPlugins={[remarkGfm, remarkBreaks]}
                 components={{
@@ -145,7 +163,7 @@ export default async function CategoriaPage({ params }: { params: Promise<{ id: 
               >
                 {category.category_description}
               </ReactMarkdown>
-            </div>
+            </DescriptionToggle>
           ) : null}
         </div>
 
@@ -154,7 +172,7 @@ export default async function CategoriaPage({ params }: { params: Promise<{ id: 
           {products.map((product) => (
             <Link
               key={product.id}
-              href={`/prodotti/${product.id}`}
+              href={`/prodotti/${product.slug || product.id}`}
               className="bg-gray-800 rounded-lg overflow-hidden hover:ring-2 hover:ring-gray-700 transition-shadow"
             >
               <div className="aspect-[3/4] bg-gradient-to-br from-gray-700 to-gray-800 relative overflow-hidden">
@@ -184,9 +202,9 @@ export const revalidate = 3600;
 export async function generateStaticParams() {
   const { data: categories } = await supabase
     .from('products_categories')
-    .select('id')
+    .select('id, slug')
     .eq('is_public', true);
-  return (categories || []).map((c) => ({ id: c.id }));
+  return (categories || []).map((c) => ({ id: c.slug || c.id }));
 }
 
 

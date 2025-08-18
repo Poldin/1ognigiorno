@@ -58,13 +58,10 @@ export default function ProductClient({ product }: ProductClientProps) {
               priority
             />
           ) : (
-            <div className="w-full h-full flex items-center justify-center text-gray-400">
-              <div className="text-center">
-                <div className="w-24 h-24 bg-gray-700 rounded-lg flex items-center justify-center mb-4 mx-auto">
-                  <span className="text-4xl">📦</span>
-                </div>
-                <p className="text-lg">Nessuna immagine disponibile</p>
-              </div>
+            <div className="w-full h-full flex items-center justify-center text-gray-300">
+              <h2 className="text-2xl md:text-3xl font-medium text-center px-4">
+                {product.name || 'Prodotto'}
+              </h2>
             </div>
           )}
         </div>
@@ -127,13 +124,10 @@ export default function ProductClient({ product }: ProductClientProps) {
                 priority
               />
             ) : (
-              <div className="w-full h-full flex items-center justify-center text-gray-400">
-                <div className="text-center">
-                  <div className="w-24 h-24 bg-gray-700 rounded-lg flex items-center justify-center mb-4 mx-auto">
-                    <span className="text-4xl">📦</span>
-                  </div>
-                  <p className="text-lg">Nessuna immagine disponibile</p>
-                </div>
+              <div className="w-full h-full flex items-center justify-center text-gray-300">
+                <h2 className="text-3xl md:text-4xl font-medium text-center px-4">
+                  {product.name || 'Prodotto'}
+                </h2>
               </div>
             )}
             </div>

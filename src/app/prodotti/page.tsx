@@ -7,7 +7,13 @@ import { supabase } from "../lib/supabase";
 import { Metadata } from "next";
 
 // Types for the data from API
-type CoverItem = Tables<'products_cover_items'>;
+type CoverItem = Tables<'products_cover_items'> & {
+  associated_product?: {
+    id: string;
+    slug: string | null;
+    name: string | null;
+  } | null;
+};
 type Category = Tables<'products_categories'>;
 type CategoryItem = Tables<'products_categories_items'>;
 
@@ -27,10 +33,17 @@ interface PageData {
  */
 async function getPageData(): Promise<PageData> {
   try {
-    // Fetch cover items for hero carousel
+    // Fetch cover items for hero carousel with associated product info
     const { data: coverItems, error: coverError } = await supabase
       .from('products_cover_items')
-      .select('*')
+      .select(`
+        *,
+        associated_product:products_categories_items!products_cover_items_product_id_fkey(
+          id,
+          slug,
+          name
+        )
+      `)
       .eq('is_public', true)
       .order('created_at', { ascending: false }); // Order by creation date instead of random
 

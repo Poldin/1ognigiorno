@@ -21,7 +21,7 @@ export const event = (action: string, category: string, label?: string, value?: 
   }
 };
 
-// Predefined events for 1OgniGiorno
+// Predefined events for ilprodottodelgiorno.it
 export const trackButtonClick = (buttonName: string, location: string) => {
   event('click', 'button', `${buttonName} - ${location}`);
 };

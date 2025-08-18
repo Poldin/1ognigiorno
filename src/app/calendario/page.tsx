@@ -60,7 +60,7 @@ export default function CalendarioPage() {
               frameBorder="0"
               scrolling="no"
               loading="lazy"
-              title="Calendario pubblico OgniGiorno"
+              title="Calendario pubblico"
             />
           </div>
         </section>

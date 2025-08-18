@@ -7,7 +7,7 @@ export type Json =
   | Json[]
 
 export type Database = {
-  // Allows to automatically instanciate createClient with right options
+  // Allows to automatically instantiate createClient with right options
   // instead of createClient<Database, { PostgrestVersion: 'XX' }>(URL, KEY)
   __InternalSupabase: {
     PostgrestVersion: "12.2.12 (cd3cf9e)"
@@ -22,10 +22,10 @@ export type Database = {
     Functions: {
       graphql: {
         Args: {
+          extensions?: Json
           operationName?: string
           query?: string
           variables?: Json
-          extensions?: Json
         }
         Returns: Json
       }
@@ -41,28 +41,31 @@ export type Database = {
     Tables: {
       products_categories: {
         Row: {
+          category_description: string | null
           created_at: string
+          expert_id: string | null
           id: string
           is_public: boolean | null
           name: string | null
-          expert_id: string | null
-          category_description: string | null
+          slug: string | null
         }
         Insert: {
+          category_description?: string | null
           created_at?: string
+          expert_id?: string | null
           id?: string
           is_public?: boolean | null
           name?: string | null
-          expert_id?: string | null
-          category_description?: string | null
+          slug?: string | null
         }
         Update: {
+          category_description?: string | null
           created_at?: string
+          expert_id?: string | null
           id?: string
           is_public?: boolean | null
           name?: string | null
-          expert_id?: string | null
-          category_description?: string | null
+          slug?: string | null
         }
         Relationships: [
           {
@@ -83,6 +86,7 @@ export type Database = {
           image_url: string | null
           is_public: boolean | null
           name: string | null
+          slug: string | null
         }
         Insert: {
           category_id?: string | null
@@ -92,6 +96,7 @@ export type Database = {
           image_url?: string | null
           is_public?: boolean | null
           name?: string | null
+          slug?: string | null
         }
         Update: {
           category_id?: string | null
@@ -101,6 +106,7 @@ export type Database = {
           image_url?: string | null
           is_public?: boolean | null
           name?: string | null
+          slug?: string | null
         }
         Relationships: [
           {
@@ -119,6 +125,8 @@ export type Database = {
           image_url: string | null
           is_public: boolean | null
           name: string | null
+          order: number | null
+          product_id: string | null
         }
         Insert: {
           created_at?: string
@@ -126,6 +134,8 @@ export type Database = {
           image_url?: string | null
           is_public?: boolean | null
           name?: string | null
+          order?: number | null
+          product_id?: string | null
         }
         Update: {
           created_at?: string
@@ -133,33 +143,70 @@ export type Database = {
           image_url?: string | null
           is_public?: boolean | null
           name?: string | null
+          order?: number | null
+          product_id?: string | null
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "products_cover_items_product_id_fkey"
+            columns: ["product_id"]
+            isOneToOne: false
+            referencedRelation: "products_categories_items"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       profile: {
         Row: {
+          bio: string | null
           created_at: string
           edited_at: string | null
           id: string
           img_url: string | null
+          nome: string | null
           role: Database["public"]["Enums"]["user_role"] | null
           user_id: string | null
         }
         Insert: {
+          bio?: string | null
           created_at?: string
           edited_at?: string | null
           id?: string
           img_url?: string | null
+          nome?: string | null
           role?: Database["public"]["Enums"]["user_role"] | null
           user_id?: string | null
         }
         Update: {
+          bio?: string | null
           created_at?: string
           edited_at?: string | null
           id?: string
           img_url?: string | null
+          nome?: string | null
           role?: Database["public"]["Enums"]["user_role"] | null
           user_id?: string | null
+        }
+        Relationships: []
+      }
+      seller: {
+        Row: {
+          created_at: string
+          id: string
+          img_url: string | null
+          name: string | null
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          img_url?: string | null
+          name?: string | null
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          img_url?: string | null
+          name?: string | null
         }
         Relationships: []
       }
