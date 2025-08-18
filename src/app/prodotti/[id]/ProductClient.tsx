@@ -9,6 +9,7 @@ import { useScrollTracking, usePageTracking } from "../../lib/useAnalytics";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import remarkBreaks from "remark-breaks";
+import { useEffect } from "react";
 
 type CategoryItem = Tables<'products_categories_items'>;
 
@@ -22,6 +23,36 @@ export default function ProductClient({ product }: ProductClientProps) {
   // Analytics tracking
   useScrollTracking();
   usePageTracking(`product-${product.id}`);
+
+  // Protezione contro download immagini
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      // Blocca Ctrl+S, Ctrl+Shift+S, F12 (dev tools)
+      if ((e.ctrlKey && e.key === 's') || 
+          (e.ctrlKey && e.shiftKey && e.key === 'S') ||
+          e.key === 'F12') {
+        e.preventDefault();
+        return false;
+      }
+    };
+
+    const handleContextMenu = (e: MouseEvent) => {
+      // Blocca click destro su immagini
+      const target = e.target as HTMLElement;
+      if (target.tagName === 'IMG') {
+        e.preventDefault();
+        return false;
+      }
+    };
+
+    document.addEventListener('keydown', handleKeyDown);
+    document.addEventListener('contextmenu', handleContextMenu);
+
+    return () => {
+      document.removeEventListener('keydown', handleKeyDown);
+      document.removeEventListener('contextmenu', handleContextMenu);
+    };
+  }, []);
 
   const handleBackClick = () => {
     trackButtonClick('Back', 'Product Page');
@@ -47,16 +78,24 @@ export default function ProductClient({ product }: ProductClientProps) {
         </h1>
         
         {/* Image */}
-        <div className="aspect-[9/16] bg-gray-800 rounded-2xl overflow-hidden">
+        <div className="aspect-[9/16] bg-gray-800 rounded-2xl overflow-hidden relative">
           {product.image_url ? (
-            <Image
-              src={product.image_url}
-              alt={product.name || 'Prodotto'}
-              width={800}
-              height={800}
-              className="w-full h-full object-cover"
-              priority
-            />
+            <>
+              <Image
+                src={product.image_url}
+                alt={product.name || 'Prodotto'}
+                width={800}
+                height={800}
+                className="w-full h-full object-cover select-none pointer-events-none"
+                priority
+                draggable={false}
+                onContextMenu={(e) => e.preventDefault()}
+              />
+              {/* Watermark */}
+              <div className="absolute top-4 left-4 text-gray-400/60 text-sm font-medium z-10">
+                ilPDG
+              </div>
+            </>
           ) : (
             <div className="w-full h-full flex items-center justify-center text-gray-300">
               <h2 className="text-2xl md:text-3xl font-medium text-center px-4">
@@ -113,16 +152,24 @@ export default function ProductClient({ product }: ProductClientProps) {
         {/* Image - Left 50% */}
         <div className="w-1/2">
           <div className="lg:sticky lg:top-7">
-            <div className="aspect-square bg-gray-800 rounded-2xl overflow-hidden">
+            <div className="aspect-square bg-gray-800 rounded-2xl overflow-hidden relative">
             {product.image_url ? (
-              <Image
-                src={product.image_url}
-                alt={product.name || 'Prodotto'}
-                width={800}
-                height={800}
-                className="w-full h-full object-cover"
-                priority
-              />
+              <>
+                <Image
+                  src={product.image_url}
+                  alt={product.name || 'Prodotto'}
+                  width={800}
+                  height={800}
+                  className="w-full h-full object-cover select-none pointer-events-none"
+                  priority
+                  draggable={false}
+                  onContextMenu={(e) => e.preventDefault()}
+                />
+                {/* Watermark */}
+                <div className="absolute top-4 left-4 text-gray-400/60 text-sm font-medium z-10">
+                  ilPDG
+                </div>
+              </>
             ) : (
               <div className="w-full h-full flex items-center justify-center text-gray-300">
                 <h2 className="text-3xl md:text-4xl font-medium text-center px-4">

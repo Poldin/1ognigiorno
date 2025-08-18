@@ -58,6 +58,36 @@ export default function ProdottiClient({ pageData }: ProdottiClientProps) {
     return () => clearInterval(timer);
   }, [pageData?.coverItems?.length]);
 
+  // Protezione contro download immagini
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      // Blocca Ctrl+S, Ctrl+Shift+S, F12 (dev tools)
+      if ((e.ctrlKey && e.key === 's') || 
+          (e.ctrlKey && e.shiftKey && e.key === 'S') ||
+          e.key === 'F12') {
+        e.preventDefault();
+        return false;
+      }
+    };
+
+    const handleContextMenu = (e: MouseEvent) => {
+      // Blocca click destro su tutto il documento
+      const target = e.target as HTMLElement;
+      if (target.tagName === 'IMG') {
+        e.preventDefault();
+        return false;
+      }
+    };
+
+    document.addEventListener('keydown', handleKeyDown);
+    document.addEventListener('contextmenu', handleContextMenu);
+
+    return () => {
+      document.removeEventListener('keydown', handleKeyDown);
+      document.removeEventListener('contextmenu', handleContextMenu);
+    };
+  }, []);
+
   const nextHero = () => {
     if (!pageData?.coverItems?.length) return;
     setCurrentHeroIndex((prev) => (prev + 1) % pageData.coverItems.length);
@@ -151,13 +181,21 @@ export default function ProdottiClient({ pageData }: ProdottiClientProps) {
             >
               {/* Background Image */}
               {item.image_url ? (
-                <Image
-                  src={item.image_url}
-                  alt={item.name || 'Prodotto'}
-                  fill
-                  className="object-cover"
-                  priority={index === 0}
-                />
+                <>
+                  <Image
+                    src={item.image_url}
+                    alt={item.name || 'Prodotto'}
+                    fill
+                    className="object-cover select-none pointer-events-none"
+                    priority={index === 0}
+                    draggable={false}
+                    onContextMenu={(e) => e.preventDefault()}
+                  />
+                  {/* Watermark */}
+                  <div className="absolute top-4 left-4 text-gray-400/60 text-sm font-medium z-10">
+                    ilPDG
+                  </div>
+                </>
               ) : (
                 <div className="absolute inset-0 bg-gradient-to-br from-gray-800 via-gray-700 to-gray-600"></div>
               )}
@@ -256,12 +294,20 @@ export default function ProdottiClient({ pageData }: ProdottiClientProps) {
                     >
                       <div className="aspect-[3/4] bg-gradient-to-br from-gray-700 to-gray-800 relative overflow-hidden">
                         {product.image_url ? (
-                          <Image
-                            src={product.image_url}
-                            alt={product.name || 'Prodotto'}
-                            fill
-                            className="object-cover"
-                          />
+                          <>
+                            <Image
+                              src={product.image_url}
+                              alt={product.name || 'Prodotto'}
+                              fill
+                              className="object-cover select-none pointer-events-none"
+                              draggable={false}
+                              onContextMenu={(e) => e.preventDefault()}
+                            />
+                            {/* Watermark */}
+                            <div className="absolute top-2 left-2 text-gray-400/60 text-xs font-medium z-10">
+                              ilPDG
+                            </div>
+                          </>
                         ) : (
                           <div className="absolute inset-0 flex items-center justify-center text-gray-400 text-sm font-medium">
                             {product.name || 'Prodotto'}
