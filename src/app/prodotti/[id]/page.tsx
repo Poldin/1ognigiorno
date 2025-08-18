@@ -5,6 +5,7 @@ import { supabase } from "../../lib/supabase";
 import { Metadata } from "next";
 import { notFound } from "next/navigation";
 import ProductClient from "./ProductClient";
+import { generateProductMetaDescription } from "../../lib/metaUtils";
 // removed headers to keep ISR static
 
 type CategoryItem = Tables<'products_categories_items'>;
@@ -128,9 +129,10 @@ export async function generateMetadata({
 
     const title = `${product.name || 'Prodotto'} - Dettagli Prodotto`;
     const productDescription = 'description' in product ? product.description : null;
-    const description = productDescription 
-      ? `${productDescription.slice(0, 160)}...`
-      : `Scopri tutti i dettagli di ${product.name || 'questo prodotto'}`;
+    const description = generateProductMetaDescription(
+      product.name || 'Prodotto',
+      productDescription
+    );
 
     return {
       title,

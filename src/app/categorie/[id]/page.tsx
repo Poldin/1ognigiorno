@@ -11,6 +11,7 @@ import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import remarkBreaks from "remark-breaks";
 import DescriptionToggle from "./DescriptionToggle";
+import { generateCategoryMetaDescription } from "../../lib/metaUtils";
 
 type Category = Tables<'products_categories'>;
 type CategoryItem = Tables<'products_categories_items'>;
@@ -87,9 +88,27 @@ export async function generateMetadata({ params }: { params: Promise<{ id: strin
   if (!data) {
     return { title: 'Categoria non trovata' };
   }
+  
+  const description = generateCategoryMetaDescription(
+    data.category.name ?? 'Categoria',
+    data.category.category_description,
+    data.products.length
+  );
+  
   return {
     title: `${data.category.name ?? 'Categoria'} | Prodotti`,
-    description: data.category.category_description || undefined,
+    description,
+    keywords: `${data.category.name}, categoria, prodotti`,
+    openGraph: {
+      title: `${data.category.name ?? 'Categoria'} | Prodotti`,
+      description,
+      type: 'website',
+    },
+    twitter: {
+      card: 'summary_large_image',
+      title: `${data.category.name ?? 'Categoria'} | Prodotti`,
+      description,
+    }
   };
 }
 

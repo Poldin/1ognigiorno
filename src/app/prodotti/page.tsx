@@ -5,6 +5,7 @@ import { Tables } from "../lib/database.types";
 import ProdottiClient from "./ProdottiClient";
 import { supabase } from "../lib/supabase";
 import { Metadata } from "next";
+import { generateCatalogMetaDescription } from "../lib/metaUtils";
 
 // Types for the data from API
 type CoverItem = Tables<'products_cover_items'> & {
@@ -134,15 +135,17 @@ export async function generateMetadata(): Promise<Metadata> {
   try {
     const data = await getPageData();
     const totalProducts = data.categories.reduce((sum, cat) => sum + cat.products.length, 0);
-    const categoryNames = data.categories.map(cat => cat.name).join(', ');
+    const categoryNames = data.categories.map(cat => cat.name).filter((name): name is string => Boolean(name));
+    
+    const description = generateCatalogMetaDescription(categoryNames, totalProducts);
     
     return {
       title: `Prodotti - Catalogo Completo | ${totalProducts} Prodotti Disponibili`,
-      description: `Scopri la nostra collezione di prodotti nelle categorie: ${categoryNames}. Catalogo completo con ${totalProducts} prodotti di qualità.`,
-      keywords: `prodotti, catalogo, ${categoryNames.toLowerCase()}`,
+      description,
+      keywords: `prodotti, catalogo, ${categoryNames.join(', ').toLowerCase()}`,
       openGraph: {
         title: `Catalogo Prodotti - ${totalProducts} Prodotti Disponibili`,
-        description: `Esplora il nostro catalogo completo con prodotti nelle categorie: ${categoryNames}`,
+        description,
         type: 'website',
         images: data.coverItems
           .filter(item => item.image_url)
@@ -155,7 +158,7 @@ export async function generateMetadata(): Promise<Metadata> {
       twitter: {
         card: 'summary_large_image',
         title: `Catalogo Prodotti - ${totalProducts} Prodotti`,
-        description: `Scopri la nostra collezione completa di prodotti`
+        description
       }
     };
   } catch {
