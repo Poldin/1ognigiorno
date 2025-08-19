@@ -15,7 +15,12 @@ type CoverItem = Tables<'products_cover_items'>;
  * Server-side data fetching for individual products
  * Supports both slug and id lookup for SEO-friendly URLs
  */
-async function getProduct(slugOrId: string): Promise<CategoryItem | CoverItem | null> {
+interface ProductWithCategory {
+  product: CategoryItem;
+  categorySlug?: string | null;
+}
+
+async function getProductWithCategory(slugOrId: string): Promise<ProductWithCategory | null> {
   try {
     // First try to find in category items by slug
     const { data: categoryProductBySlug, error: categorySlugError } = await supabase
@@ -26,7 +31,12 @@ async function getProduct(slugOrId: string): Promise<CategoryItem | CoverItem | 
       .single();
 
     if (categoryProductBySlug && !categorySlugError) {
-      return categoryProductBySlug;
+      // Get category slug for navigation
+      const categorySlug = await getCategorySlug(categoryProductBySlug.category_id);
+      return {
+        product: categoryProductBySlug,
+        categorySlug
+      };
     }
 
     // If not found by slug, try by id in category items
@@ -38,7 +48,12 @@ async function getProduct(slugOrId: string): Promise<CategoryItem | CoverItem | 
       .single();
 
     if (categoryProduct && !categoryError) {
-      return categoryProduct;
+      // Get category slug for navigation
+      const categorySlug = await getCategorySlug(categoryProduct.category_id);
+      return {
+        product: categoryProduct,
+        categorySlug
+      };
     }
 
     // If not found in category items, try cover items (only by id, cover items don't have slugs)
@@ -59,12 +74,36 @@ async function getProduct(slugOrId: string): Promise<CategoryItem | CoverItem | 
       };
       // Remove properties that don't exist in CategoryItem
       const { order, product_id, ...categoryItemFormat } = productForPage;
-      return categoryItemFormat as CategoryItem;
+      return {
+        product: categoryItemFormat as CategoryItem,
+        categorySlug: null // Cover items don't belong to a category
+      };
     }
 
     return null;
   } catch (error) {
     console.error('Error fetching product:', error);
+    return null;
+  }
+}
+
+async function getCategorySlug(categoryId: string | null): Promise<string | null> {
+  if (!categoryId) return null;
+  
+  try {
+    const { data: category, error } = await supabase
+      .from('products_categories')
+      .select('slug, id')
+      .eq('id', categoryId)
+      .eq('is_public', true)
+      .single();
+    
+    if (error || !category) return null;
+    
+    // Return slug if available, otherwise return id
+    return category.slug || category.id;
+  } catch (error) {
+    console.error('Error fetching category:', error);
     return null;
   }
 }
@@ -118,14 +157,16 @@ export async function generateMetadata({
 }): Promise<Metadata> {
   try {
     const { id } = await params;
-    const product = await getProduct(id);
+    const productData = await getProductWithCategory(id);
     
-    if (!product) {
+    if (!productData) {
       return {
         title: 'Prodotto non trovato',
         description: 'Il prodotto richiesto non è disponibile'
       };
     }
+
+    const { product } = productData;
 
     const title = `${product.name || 'Prodotto'} - Dettagli Prodotto`;
     const productDescription = 'description' in product ? product.description : null;
@@ -173,18 +214,27 @@ export default async function ProductPage({
 }) {
   try {
     const { id } = await params;
-    const product = await getProduct(id);
+    const productData = await getProductWithCategory(id);
     
-    if (!product) {
+    if (!productData) {
       notFound();
     }
 
+    const { product, categorySlug } = productData;
+
+    const shareData = {
+      title: `${product.name || 'Prodotto'} - Il Prodotto del Giorno`,
+      description: product.description 
+        ? product.description.substring(0, 160) + (product.description.length > 160 ? '...' : '')
+        : `Scopri ${product.name || 'questo prodotto straordinario'} su Il Prodotto del Giorno.`
+    };
+
     return (
       <div className="min-h-screen bg-gray-950 text-white">
-        <HeaderDark />
+        <HeaderDark shareData={shareData} />
         
         {/* Pass data to client component for interactive features */}
-        <ProductClient product={product as CategoryItem} />
+        <ProductClient product={product} categorySlug={categorySlug} shareData={shareData} />
         
         <FooterDark />
       </div>

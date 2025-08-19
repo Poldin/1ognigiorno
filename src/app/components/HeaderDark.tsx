@@ -6,20 +6,35 @@ import { Menu, X, HelpCircle, Share2, SquareChartGantt, Calendar } from "lucide-
 import { trackButtonClick, trackSocialShare } from "../lib/gtag";
 import { getDayNumber } from "../lib/getDayNumber";
 
-export default function HeaderDark() {
+interface HeaderDarkProps {
+  shareData?: {
+    title: string;
+    description: string;
+  };
+}
+
+export default function HeaderDark({ shareData }: HeaderDarkProps) {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
   const handleNativeShare = async () => {
-    const shareData = {
+    const defaultShareData = {
       title: 'Il prodotto del giorno - Scopri prodotti straordinari ogni giorno',
       text: 'La piattaforma che ogni giorno presenta un prodotto straordinario e lo trasforma in un fenomeno virale.',
       url: window.location.href
     };
 
+    const currentShareData = shareData 
+      ? {
+          title: shareData.title,
+          text: shareData.description,
+          url: window.location.href
+        }
+      : defaultShareData;
+
     // Prova a usare l'API nativa di condivisione
-    if (navigator.share && navigator.canShare && navigator.canShare(shareData)) {
+    if (navigator.share && navigator.canShare && navigator.canShare(currentShareData)) {
       try {
-        await navigator.share(shareData);
+        await navigator.share(currentShareData);
         trackSocialShare('Native Share');
         setIsMenuOpen(false);
       } catch {

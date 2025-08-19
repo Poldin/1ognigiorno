@@ -2,7 +2,6 @@ import HeaderDark from "../../components/HeaderDark";
 import FooterDark from "../../components/FooterDark";
 import Image from "next/image";
 import Link from "next/link";
-import { ArrowLeft } from "lucide-react";
 import { supabase } from "../../lib/supabase";
 import { Tables } from "../../lib/database.types";
 import { Metadata } from "next";
@@ -11,6 +10,9 @@ import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import remarkBreaks from "remark-breaks";
 import DescriptionToggle from "./DescriptionToggle";
+import ImageProtection from "./ImageProtection";
+import ProtectedImage from "./ProtectedImage";
+import CategoryActions from "./CategoryActions";
 import { generateCategoryMetaDescription } from "../../lib/metaUtils";
 
 type Category = Tables<'products_categories'>;
@@ -121,25 +123,33 @@ export default async function CategoriaPage({ params }: { params: Promise<{ id: 
 
   const { category, products } = data!;
 
+  const shareData = {
+    title: `${category.name || 'Categoria'} - Il Prodotto del Giorno`,
+    description: category.category_description 
+      ? category.category_description.substring(0, 160) + (category.category_description.length > 160 ? '...' : '')
+      : `Esplora la categoria ${category.name || 'prodotti'} con ${products.length} prodotti straordinari.`
+  };
+
   return (
     <div className="min-h-screen bg-gray-950 text-white">
-      <HeaderDark />
+      <HeaderDark shareData={shareData} />
+      <ImageProtection />
 
       <main className="max-w-6xl mx-auto px-4 py-8">
-        {/* Back Button to products */}
-        <Link
-          href="/prodotti"
-          className="inline-flex items-center gap-2 mb-8 px-4 py-2 bg-gray-800 hover:bg-gray-700 rounded-lg transition-colors"
-        >
-          <ArrowLeft className="w-4 h-4" />
-          <span>indietro</span>
-        </Link>
+        {/* Back and Share Buttons */}
+        <CategoryActions shareData={shareData} />
 
         {/* Hero section with expert avatar, title, description */}
         <div className="flex flex-col items-center text-center gap-6 mb-12">
           {category.expertImageUrl ? (
             <div className="relative w-40 h-40 md:w-48 md:h-48 rounded-full overflow-hidden border-2 border-white/20 shadow-2xl">
-              <Image src={category.expertImageUrl} alt="Responsabile categoria" fill className="object-cover" />
+              <Image 
+                src={category.expertImageUrl} 
+                alt="Responsabile categoria" 
+                fill 
+                className="object-cover select-none pointer-events-none" 
+                draggable={false}
+              />
             </div>
           ) : null}
           <h1 className="text-3xl md:text-5xl font-medium">{category.name}</h1>
@@ -196,7 +206,10 @@ export default async function CategoriaPage({ params }: { params: Promise<{ id: 
             >
               <div className="aspect-[3/4] bg-gradient-to-br from-gray-700 to-gray-800 relative overflow-hidden">
                 {product.image_url ? (
-                  <Image src={product.image_url} alt={product.name || 'Prodotto'} fill className="object-cover" />
+                  <ProtectedImage 
+                    src={product.image_url} 
+                    alt={product.name || 'Prodotto'} 
+                  />
                 ) : (
                   <div className="absolute inset-0 flex items-center justify-center text-gray-400 text-sm font-medium">
                     {product.name || 'Prodotto'}

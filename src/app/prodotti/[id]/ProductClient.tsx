@@ -10,14 +10,20 @@ import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import remarkBreaks from "remark-breaks";
 import { useEffect } from "react";
+import ShareButton from "../../components/ShareButton";
 
 type CategoryItem = Tables<'products_categories_items'>;
 
 interface ProductClientProps {
   product: CategoryItem;
+  categorySlug?: string | null;
+  shareData: {
+    title: string;
+    description: string;
+  };
 }
 
-export default function ProductClient({ product }: ProductClientProps) {
+export default function ProductClient({ product, categorySlug, shareData }: ProductClientProps) {
   const router = useRouter();
   
   // Analytics tracking
@@ -56,19 +62,29 @@ export default function ProductClient({ product }: ProductClientProps) {
 
   const handleBackClick = () => {
     trackButtonClick('Back', 'Product Page');
-    router.push('/prodotti');
+    
+    // If product has a category, navigate to that category
+    if (categorySlug) {
+      router.push(`/categorie/${categorySlug}`);
+    } else {
+      // Fallback to main products page (for cover items or products without category)
+      router.push('/prodotti');
+    }
   };
 
   return (
     <div className="max-w-7xl mx-auto px-4 py-8">
-      {/* Back Button */}
-      <button
-        onClick={handleBackClick}
-        className="flex items-center gap-2 mb-8 px-4 py-2 bg-gray-800 hover:bg-gray-700 rounded-lg transition-colors"
-      >
-        <ArrowLeft className="w-4 h-4" />
-        <span>indietro</span>
-      </button>
+      {/* Back and Share Buttons */}
+      <div className="flex items-center gap-3 mb-8">
+        <button
+          onClick={handleBackClick}
+          className="flex items-center gap-2 px-4 py-2 bg-gray-800 hover:bg-gray-700 rounded-lg transition-colors"
+        >
+          <ArrowLeft className="w-4 h-4" />
+          <span>indietro</span>
+        </button>
+        <ShareButton shareData={shareData} />
+      </div>
 
       {/* Mobile Layout */}
       <div className="block lg:hidden space-y-6">
