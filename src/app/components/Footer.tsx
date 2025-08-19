@@ -40,9 +40,9 @@ export default function Footer() {
             © 2025 Il prodotto del giorno. Tutti i diritti riservati.
           </p>
           <div className="flex gap-6 text-sm text-gray-500 mt-4 sm:mt-0">
-            <a href="#" className="hover:text-gray-800 transition-colors">Privacy</a>
-            <a href="#" className="hover:text-gray-800 transition-colors">Termini</a>
-            <a href="#" className="hover:text-gray-800 transition-colors">Cookie</a>
+            <a href="https://www.iubenda.com/privacy-policy/80959713" target="_blank" rel="noopener noreferrer" className="hover:text-gray-800 transition-colors">Privacy</a>
+            <a href="https://www.iubenda.com/termini-e-condizioni/80959713" target="_blank" rel="noopener noreferrer" className="hover:text-gray-800 transition-colors">Termini</a>
+            <a href="https://www.iubenda.com/privacy-policy/80959713/cookie-policy" target="_blank" rel="noopener noreferrer" className="hover:text-gray-800 transition-colors">Cookie</a>
           </div>
         </div>
       </div>
