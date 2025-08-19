@@ -53,6 +53,13 @@ export default function RootLayout({
             />
           </>
         )}
+
+        {/* Iubenda Privacy & Cookie Solution */}
+        <Script
+          id="iubenda-script"
+          src="//embeds.iubenda.com/widgets/1796ffd1-14c1-45cb-97a1-8e37038878a9.js"
+          strategy="afterInteractive"
+        />
       </head>
       <body
         className={`${geistSans.variable} ${geistMono.variable} ${spaceGrotesk.variable} antialiased`}
