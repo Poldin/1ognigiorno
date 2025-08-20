@@ -15,9 +15,19 @@ type CoverItem = Tables<'products_cover_items'>;
  * Server-side data fetching for individual products
  * Supports both slug and id lookup for SEO-friendly URLs
  */
+type SellingLink = {
+  id: string;
+  name: string | null;
+  descrizione: string | null;
+  img_url: string | null;
+  link: string | null;
+  calltoaction: string | null;
+};
+
 interface ProductWithCategory {
   product: CategoryItem;
   categorySlug?: string | null;
+  sellingLinks: SellingLink[];
 }
 
 async function getProductWithCategory(slugOrId: string): Promise<ProductWithCategory | null> {
@@ -33,9 +43,12 @@ async function getProductWithCategory(slugOrId: string): Promise<ProductWithCate
     if (categoryProductBySlug && !categorySlugError) {
       // Get category slug for navigation
       const categorySlug = await getCategorySlug(categoryProductBySlug.category_id);
+      // Get selling links for this product
+      const sellingLinks = await getProductSellingLinks(categoryProductBySlug.id);
       return {
         product: categoryProductBySlug,
-        categorySlug
+        categorySlug,
+        sellingLinks
       };
     }
 
@@ -50,9 +63,12 @@ async function getProductWithCategory(slugOrId: string): Promise<ProductWithCate
     if (categoryProduct && !categoryError) {
       // Get category slug for navigation
       const categorySlug = await getCategorySlug(categoryProduct.category_id);
+      // Get selling links for this product
+      const sellingLinks = await getProductSellingLinks(categoryProduct.id);
       return {
         product: categoryProduct,
-        categorySlug
+        categorySlug,
+        sellingLinks
       };
     }
 
@@ -74,9 +90,12 @@ async function getProductWithCategory(slugOrId: string): Promise<ProductWithCate
       };
       // Remove properties that don't exist in CategoryItem
       const { order, product_id, ...categoryItemFormat } = productForPage;
+      // Get selling links for cover items (use the cover item ID)
+      const sellingLinks = await getProductSellingLinks(coverProduct.id);
       return {
         product: categoryItemFormat as CategoryItem,
-        categorySlug: null // Cover items don't belong to a category
+        categorySlug: null, // Cover items don't belong to a category
+        sellingLinks
       };
     }
 
@@ -105,6 +124,40 @@ async function getCategorySlug(categoryId: string | null): Promise<string | null
   } catch (error) {
     console.error('Error fetching category:', error);
     return null;
+  }
+}
+
+async function getProductSellingLinks(productId: string): Promise<SellingLink[]> {
+  try {
+    // Fetch selling links associated with this specific product
+    const { data: productSellingLinks, error: productLinksError } = await supabase
+      .from('link_items_sellinglinks')
+      .select(`
+        selling_links (
+          id,
+          name,
+          descrizione,
+          img_url,
+          link,
+          calltoaction
+        )
+      `)
+      .eq('item_id', productId);
+
+    if (productLinksError) {
+      console.error('Error fetching product selling links:', productLinksError);
+      return [];
+    }
+
+    // Extract selling links from the join result
+    const sellingLinks = (productSellingLinks || [])
+      .map(link => link.selling_links)
+      .filter((link): link is SellingLink => link !== null);
+
+    return sellingLinks;
+  } catch (error) {
+    console.error('Error in getProductSellingLinks:', error);
+    return [];
   }
 }
 
@@ -220,7 +273,7 @@ export default async function ProductPage({
       notFound();
     }
 
-    const { product, categorySlug } = productData;
+    const { product, categorySlug, sellingLinks } = productData;
 
     const shareData = {
       title: `${product.name || 'Prodotto'} - Il Prodotto del Giorno`,
@@ -234,7 +287,7 @@ export default async function ProductPage({
         <HeaderDark shareData={shareData} />
         
         {/* Pass data to client component for interactive features */}
-        <ProductClient product={product} categorySlug={categorySlug} shareData={shareData} />
+        <ProductClient product={product} categorySlug={categorySlug} shareData={shareData} sellingLinks={sellingLinks} />
         
         <FooterDark />
       </div>

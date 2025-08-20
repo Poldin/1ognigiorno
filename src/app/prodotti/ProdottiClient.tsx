@@ -8,6 +8,7 @@ import { useState, useEffect } from "react";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { Tables } from "../lib/database.types";
 import { useRouter } from "next/navigation";
+import SellingLinkBanner from "./SellingLinkBanner";
 
 // Types for the data from API
 type CoverItem = Tables<'products_cover_items'> & {
@@ -25,9 +26,19 @@ interface CategoryWithProducts extends Category {
   expertImageUrl?: string | null;
 }
 
+type SellingLink = {
+  id: string;
+  name: string | null;
+  descrizione: string | null;
+  img_url: string | null;
+  link: string | null;
+  calltoaction: string | null;
+};
+
 interface PageData {
   coverItems: CoverItem[];
   categories: CategoryWithProducts[];
+  sellingLinks: SellingLink[];
 }
 
 interface ProdottiClientProps {
@@ -286,62 +297,150 @@ export default function ProdottiClient({ pageData }: ProdottiClientProps) {
                   className="flex gap-2 overflow-x-auto scrollbar-hide md:scrollbar-hide pb-4"
                   style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
                 >
-                  {category.products.map((product) => (
-                    <div
-                      key={product.id}
-                      onClick={() => handleProductClick(product, product.name || 'Prodotto', `Category: ${category.name}`)}
-                      className="flex-shrink-0 w-64 bg-gray-800 rounded-lg overflow-hidden cursor-pointer"
-                    >
-                      <div className="aspect-[3/4] bg-gradient-to-br from-gray-700 to-gray-800 relative overflow-hidden">
-                        {product.image_url ? (
-                          <>
-                            <Image
-                              src={product.image_url}
-                              alt={product.name || 'Prodotto'}
-                              fill
-                              className="object-cover select-none pointer-events-none"
-                              draggable={false}
-                              onContextMenu={(e) => e.preventDefault()}
-                            />
-                            {/* Watermark */}
-                            <div className="absolute top-2 left-2 text-gray-400/60 text-xs font-medium z-10">
-                              ilPDG
-                            </div>
-                          </>
-                        ) : (
-                          <div className="absolute inset-0 flex items-center justify-center text-gray-400 text-sm font-medium">
-                            {product.name || 'Prodotto'}
-                          </div>
-                        )}
-                      </div>
-                      
-                      <div className="p-4">
-                        <div className="overflow-hidden relative group">
-                          {(product.name || 'Prodotto').length > 25 ? (
-                            <h3 className="font-semibold text-white whitespace-nowrap">
-                              <div 
-                                className="inline-block group-hover:animate-none"
-                                style={{
-                                  animation: 'marquee-loop 15s linear infinite'
-                                }}
-                              >
-                                <span className="inline-block pr-8">
-                                  {product.name || 'Prodotto'}
-                                </span>
-                                <span className="inline-block pr-8">
-                                  {product.name || 'Prodotto'}
-                                </span>
+{(() => {
+                    const elements = [];
+                    let bannerIndex = 0;
+                    
+                    // Se non ci sono selling links, mostra solo i prodotti
+                    if (pageData.sellingLinks.length === 0) {
+                      return category.products.map((product) => (
+                        <div
+                          key={product.id}
+                          onClick={() => handleProductClick(product, product.name || 'Prodotto', `Category: ${category.name}`)}
+                          className="flex-shrink-0 w-64 bg-gray-800 rounded-lg overflow-hidden cursor-pointer"
+                        >
+                          <div className="aspect-[3/4] bg-gradient-to-br from-gray-700 to-gray-800 relative overflow-hidden">
+                            {product.image_url ? (
+                              <>
+                                <Image
+                                  src={product.image_url}
+                                  alt={product.name || 'Prodotto'}
+                                  fill
+                                  className="object-cover select-none pointer-events-none"
+                                  draggable={false}
+                                  onContextMenu={(e) => e.preventDefault()}
+                                />
+                                {/* Watermark */}
+                                <div className="absolute top-2 left-2 text-gray-400/60 text-xs font-medium z-10">
+                                  ilPDG
+                                </div>
+                              </>
+                            ) : (
+                              <div className="absolute inset-0 flex items-center justify-center text-gray-400 text-sm font-medium">
+                                {product.name || 'Prodotto'}
                               </div>
-                            </h3>
-                          ) : (
-                            <h3 className="font-semibold text-white">
-                              {product.name || 'Prodotto'}
-                            </h3>
-                          )}
+                            )}
+                          </div>
+                          
+                          <div className="p-4">
+                            <div className="overflow-hidden relative group">
+                              {(product.name || 'Prodotto').length > 25 ? (
+                                <h3 className="font-semibold text-white whitespace-nowrap">
+                                  <div 
+                                    className="inline-block group-hover:animate-none"
+                                    style={{
+                                      animation: 'marquee-loop 15s linear infinite'
+                                    }}
+                                  >
+                                    <span className="inline-block pr-8">
+                                      {product.name || 'Prodotto'}
+                                    </span>
+                                    <span className="inline-block pr-8">
+                                      {product.name || 'Prodotto'}
+                                    </span>
+                                  </div>
+                                </h3>
+                              ) : (
+                                <h3 className="font-semibold text-white">
+                                  {product.name || 'Prodotto'}
+                                </h3>
+                              )}
+                            </div>
+                          </div>
                         </div>
-                      </div>
-                    </div>
-                  ))}
+                      ));
+                    }
+                    
+                    // Pattern: ogni 6 prodotti inserisci una selling link
+                    for (let i = 0; i < category.products.length; i++) {
+                      const product = category.products[i];
+                      
+                      // Aggiungi il prodotto
+                      elements.push(
+                        <div
+                          key={product.id}
+                          onClick={() => handleProductClick(product, product.name || 'Prodotto', `Category: ${category.name}`)}
+                          className="flex-shrink-0 w-64 bg-gray-800 rounded-lg overflow-hidden cursor-pointer"
+                        >
+                          <div className="aspect-[3/4] bg-gradient-to-br from-gray-700 to-gray-800 relative overflow-hidden">
+                            {product.image_url ? (
+                              <>
+                                <Image
+                                  src={product.image_url}
+                                  alt={product.name || 'Prodotto'}
+                                  fill
+                                  className="object-cover select-none pointer-events-none"
+                                  draggable={false}
+                                  onContextMenu={(e) => e.preventDefault()}
+                                />
+                                {/* Watermark */}
+                                <div className="absolute top-2 left-2 text-gray-400/60 text-xs font-medium z-10">
+                                  ilPDG
+                                </div>
+                              </>
+                            ) : (
+                              <div className="absolute inset-0 flex items-center justify-center text-gray-400 text-sm font-medium">
+                                {product.name || 'Prodotto'}
+                              </div>
+                            )}
+                          </div>
+                          
+                          <div className="p-4">
+                            <div className="overflow-hidden relative group">
+                              {(product.name || 'Prodotto').length > 25 ? (
+                                <h3 className="font-semibold text-white whitespace-nowrap">
+                                  <div 
+                                    className="inline-block group-hover:animate-none"
+                                    style={{
+                                      animation: 'marquee-loop 15s linear infinite'
+                                    }}
+                                  >
+                                    <span className="inline-block pr-8">
+                                      {product.name || 'Prodotto'}
+                                    </span>
+                                    <span className="inline-block pr-8">
+                                      {product.name || 'Prodotto'}
+                                    </span>
+                                  </div>
+                                </h3>
+                              ) : (
+                                <h3 className="font-semibold text-white">
+                                  {product.name || 'Prodotto'}
+                                </h3>
+                              )}
+                            </div>
+                          </div>
+                        </div>
+                      );
+                      
+                      // Ogni 6 prodotti, aggiungi una selling link banner
+                      if ((i + 1) % 6 === 0) {
+                        const sellingLinkIndex = bannerIndex % pageData.sellingLinks.length;
+                        const colorIndex = bannerIndex + (categoryIndex * 3); // Offset per categoria
+                        
+                        elements.push(
+                          <SellingLinkBanner
+                            key={`selling-${categoryIndex}-${bannerIndex}`}
+                            sellingLink={pageData.sellingLinks[sellingLinkIndex]}
+                            colorIndex={colorIndex}
+                          />
+                        );
+                        bannerIndex++;
+                      }
+                    }
+                    
+                    return elements;
+                  })()}
                 </div>
               </div>
             </div>

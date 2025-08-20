@@ -11,8 +11,19 @@ import remarkGfm from "remark-gfm";
 import remarkBreaks from "remark-breaks";
 import { useEffect } from "react";
 import ShareButton from "../../components/ShareButton";
+import SellingLinkHorizontalBanner from "./SellingLinkHorizontalBanner";
+import SellingLinkBanner from "./SellingLinkBanner";
 
 type CategoryItem = Tables<'products_categories_items'>;
+
+type SellingLink = {
+  id: string;
+  name: string | null;
+  descrizione: string | null;
+  img_url: string | null;
+  link: string | null;
+  calltoaction: string | null;
+};
 
 interface ProductClientProps {
   product: CategoryItem;
@@ -21,9 +32,10 @@ interface ProductClientProps {
     title: string;
     description: string;
   };
+  sellingLinks: SellingLink[];
 }
 
-export default function ProductClient({ product, categorySlug, shareData }: ProductClientProps) {
+export default function ProductClient({ product, categorySlug, shareData, sellingLinks }: ProductClientProps) {
   const router = useRouter();
   
   // Analytics tracking
@@ -92,6 +104,11 @@ export default function ProductClient({ product, categorySlug, shareData }: Prod
         <h1 className="text-3xl font-medium text-white">
           {product.name || 'Prodotto'}
         </h1>
+        
+        {/* Horizontal Selling Link Banner - Mobile */}
+        {sellingLinks.length > 0 && (
+          <SellingLinkHorizontalBanner sellingLink={sellingLinks[0]} />
+        )}
         
         {/* Image */}
         <div className="aspect-[9/16] bg-gray-800 rounded-2xl overflow-hidden relative">
@@ -203,6 +220,11 @@ export default function ProductClient({ product, categorySlug, shareData }: Prod
           <h1 className="text-4xl font-medium text-gray-200">
             {product.name || 'Prodotto'}
           </h1>
+          
+          {/* Horizontal Selling Link Banner - Desktop */}
+          {sellingLinks.length > 0 && (
+            <SellingLinkHorizontalBanner sellingLink={sellingLinks[0]} />
+          )}
 
           {/* Description */}
           <div className="space-y-4">
@@ -246,6 +268,21 @@ export default function ProductClient({ product, categorySlug, shareData }: Prod
           </div>
         </div>
       </div>
+      
+      {/* Selling Links Cards Section - Bottom of Page */}
+      {sellingLinks.length > 0 && (
+        <div className="mt-12 pt-8 border-t border-gray-700">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+            {sellingLinks.map((sellingLink, index) => (
+              <SellingLinkBanner
+                key={sellingLink.id}
+                sellingLink={sellingLink}
+                colorIndex={index}
+              />
+            ))}
+          </div>
+        </div>
+      )}
     </div>
   );
 }

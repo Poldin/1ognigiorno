@@ -13,6 +13,7 @@ import DescriptionToggle from "./DescriptionToggle";
 import ImageProtection from "./ImageProtection";
 import ProtectedImage from "./ProtectedImage";
 import CategoryActions from "./CategoryActions";
+import CategoryClient from "./CategoryClient";
 import { generateCategoryMetaDescription } from "../../lib/metaUtils";
 
 type Category = Tables<'products_categories'>;
@@ -21,7 +22,17 @@ type CategoryItem = Tables<'products_categories_items'>;
 interface CategoryPageData {
   category: Category & { expertImageUrl?: string | null };
   products: CategoryItem[];
+  sellingLinks: SellingLink[];
 }
+
+type SellingLink = {
+  id: string;
+  name: string | null;
+  descrizione: string | null;
+  img_url: string | null;
+  link: string | null;
+  calltoaction: string | null;
+};
 
 async function getCategoryData(slugOrId: string): Promise<CategoryPageData | null> {
   // First try to find category by slug
@@ -78,9 +89,34 @@ async function getCategoryData(slugOrId: string): Promise<CategoryPageData | nul
     }
   }
 
+  // Fetch selling links for this category
+  const { data: sellingLinks, error: sellingLinksError } = await supabase
+    .from('link_category_sellinglink')
+    .select(`
+      selling_links (
+        id,
+        name,
+        descrizione,
+        img_url,
+        link,
+        calltoaction
+      )
+    `)
+    .eq('category_id', category.id);
+
+  if (sellingLinksError) {
+    console.error('Error fetching selling links:', sellingLinksError);
+  }
+
+  // Extract selling links from the join result
+  const categorySellingLinks = (sellingLinks || [])
+    .map(link => link.selling_links)
+    .filter((link): link is SellingLink => link !== null);
+
   return {
     category: { ...category, expertImageUrl },
     products: products || [],
+    sellingLinks: categorySellingLinks,
   };
 }
 
@@ -121,7 +157,7 @@ export default async function CategoriaPage({ params }: { params: Promise<{ id: 
     notFound();
   }
 
-  const { category, products } = data!;
+  const { category, products, sellingLinks } = data!;
 
   const shareData = {
     title: `${category.name || 'Categoria'} - Il Prodotto del Giorno`,
@@ -196,32 +232,8 @@ export default async function CategoriaPage({ params }: { params: Promise<{ id: 
           ) : null}
         </div>
 
-        {/* Products grid on desktop, stacked on mobile */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-          {products.map((product) => (
-            <Link
-              key={product.id}
-              href={`/prodotti/${product.slug || product.id}`}
-              className="bg-gray-800 rounded-lg overflow-hidden hover:ring-2 hover:ring-gray-700 transition-shadow"
-            >
-              <div className="aspect-[3/4] bg-gradient-to-br from-gray-700 to-gray-800 relative overflow-hidden">
-                {product.image_url ? (
-                  <ProtectedImage 
-                    src={product.image_url} 
-                    alt={product.name || 'Prodotto'} 
-                  />
-                ) : (
-                  <div className="absolute inset-0 flex items-center justify-center text-gray-400 text-sm font-medium">
-                    {product.name || 'Prodotto'}
-                  </div>
-                )}
-              </div>
-              <div className="p-4">
-                <h3 className="font-semibold text-white">{product.name || 'Prodotto'}</h3>
-              </div>
-            </Link>
-          ))}
-        </div>
+        {/* Products grid with integrated banners */}
+        <CategoryClient products={products} sellingLinks={sellingLinks} />
       </main>
 
       <FooterDark />

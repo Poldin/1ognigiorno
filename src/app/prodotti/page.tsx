@@ -23,9 +23,19 @@ interface CategoryWithProducts extends Category {
   expertImageUrl?: string | null;
 }
 
+type SellingLink = {
+  id: string;
+  name: string | null;
+  descrizione: string | null;
+  img_url: string | null;
+  link: string | null;
+  calltoaction: string | null;
+};
+
 interface PageData {
   coverItems: CoverItem[];
   categories: CategoryWithProducts[];
+  sellingLinks: SellingLink[];
 }
 
 /**
@@ -118,9 +128,21 @@ async function getPageData(): Promise<PageData> {
       expertImageUrl: category.expert_id ? expertIdToImageUrl[category.expert_id] ?? null : null,
     }));
 
+    // Fetch selling links globali (non associati a categorie specifiche)
+    // Per la pagina prodotti principale, prendiamo tutti i selling links disponibili
+    const { data: allSellingLinks, error: sellingLinksError } = await supabase
+      .from('selling_links')
+      .select('*')
+      .order('created_at', { ascending: false });
+
+    if (sellingLinksError) {
+      console.error('Error fetching selling links:', sellingLinksError);
+    }
+
     return {
       coverItems: coverItems || [],
-      categories: categoriesWithItems
+      categories: categoriesWithItems,
+      sellingLinks: allSellingLinks || []
     };
   } catch (error) {
     console.error('Error in getPageData:', error);
