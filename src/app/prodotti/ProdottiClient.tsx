@@ -24,6 +24,7 @@ type CategoryItem = Tables<'products_categories_items'>;
 interface CategoryWithProducts extends Category {
   products: CategoryItem[];
   expertImageUrl?: string | null;
+  sellingLinks: SellingLink[];
 }
 
 type SellingLink = {
@@ -38,7 +39,6 @@ type SellingLink = {
 interface PageData {
   coverItems: CoverItem[];
   categories: CategoryWithProducts[];
-  sellingLinks: SellingLink[];
 }
 
 interface ProdottiClientProps {
@@ -301,8 +301,8 @@ export default function ProdottiClient({ pageData }: ProdottiClientProps) {
                     const elements = [];
                     let bannerIndex = 0;
                     
-                    // Se non ci sono selling links, mostra solo i prodotti
-                    if (pageData.sellingLinks.length === 0) {
+                    // Se non ci sono selling links per questa categoria, mostra solo i prodotti
+                    if (category.sellingLinks.length === 0) {
                       return category.products.map((product) => (
                         <div
                           key={product.id}
@@ -423,15 +423,15 @@ export default function ProdottiClient({ pageData }: ProdottiClientProps) {
                         </div>
                       );
                       
-                      // Ogni 6 prodotti, aggiungi una selling link banner
+                      // Ogni 6 prodotti, aggiungi una selling link banner specifica per questa categoria
                       if ((i + 1) % 6 === 0) {
-                        const sellingLinkIndex = bannerIndex % pageData.sellingLinks.length;
+                        const sellingLinkIndex = bannerIndex % category.sellingLinks.length;
                         const colorIndex = bannerIndex + (categoryIndex * 3); // Offset per categoria
                         
                         elements.push(
                           <SellingLinkBanner
                             key={`selling-${categoryIndex}-${bannerIndex}`}
-                            sellingLink={pageData.sellingLinks[sellingLinkIndex]}
+                            sellingLink={category.sellingLinks[sellingLinkIndex]}
                             colorIndex={colorIndex}
                           />
                         );

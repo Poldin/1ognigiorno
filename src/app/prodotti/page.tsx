@@ -21,6 +21,7 @@ type CategoryItem = Tables<'products_categories_items'>;
 interface CategoryWithProducts extends Category {
   products: CategoryItem[];
   expertImageUrl?: string | null;
+  sellingLinks: SellingLink[];
 }
 
 type SellingLink = {
@@ -35,7 +36,6 @@ type SellingLink = {
 interface PageData {
   coverItems: CoverItem[];
   categories: CategoryWithProducts[];
-  sellingLinks: SellingLink[];
 }
 
 /**
@@ -121,28 +121,52 @@ async function getPageData(): Promise<PageData> {
       return acc;
     }, {});
 
-    // Create final categories structure with their items and expert image
+    // Fetch selling links for all categories at once
+    const categoryIds = (categories || []).map(c => c.id);
+    const categorySellingLinks: Record<string, SellingLink[]> = {};
+    
+    if (categoryIds.length > 0) {
+      const { data: allCategorySellingLinks, error: sellingLinksError } = await supabase
+        .from('link_category_sellinglink')
+        .select(`
+          category_id,
+          selling_links (
+            id,
+            name,
+            descrizione,
+            img_url,
+            link,
+            calltoaction
+          )
+        `)
+        .in('category_id', categoryIds);
+
+      if (sellingLinksError) {
+        console.error('Error fetching category selling links:', sellingLinksError);
+      } else {
+        // Group selling links by category_id
+        (allCategorySellingLinks || []).forEach(link => {
+          if (link.category_id && link.selling_links) {
+            if (!categorySellingLinks[link.category_id]) {
+              categorySellingLinks[link.category_id] = [];
+            }
+            categorySellingLinks[link.category_id].push(link.selling_links as SellingLink);
+          }
+        });
+      }
+    }
+
+    // Create final categories structure with their items, expert image, and selling links
     const categoriesWithItems = (categories || []).map(category => ({
       ...category,
       products: groupedItems[category.id] || [],
       expertImageUrl: category.expert_id ? expertIdToImageUrl[category.expert_id] ?? null : null,
+      sellingLinks: categorySellingLinks[category.id] || [],
     }));
-
-    // Fetch selling links globali (non associati a categorie specifiche)
-    // Per la pagina prodotti principale, prendiamo tutti i selling links disponibili
-    const { data: allSellingLinks, error: sellingLinksError } = await supabase
-      .from('selling_links')
-      .select('*')
-      .order('created_at', { ascending: false });
-
-    if (sellingLinksError) {
-      console.error('Error fetching selling links:', sellingLinksError);
-    }
 
     return {
       coverItems: coverItems || [],
-      categories: categoriesWithItems,
-      sellingLinks: allSellingLinks || []
+      categories: categoriesWithItems
     };
   } catch (error) {
     console.error('Error in getPageData:', error);

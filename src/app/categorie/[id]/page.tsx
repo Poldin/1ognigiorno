@@ -1,7 +1,6 @@
 import HeaderDark from "../../components/HeaderDark";
 import FooterDark from "../../components/FooterDark";
 import Image from "next/image";
-import Link from "next/link";
 import { supabase } from "../../lib/supabase";
 import { Tables } from "../../lib/database.types";
 import { Metadata } from "next";
@@ -11,7 +10,6 @@ import remarkGfm from "remark-gfm";
 import remarkBreaks from "remark-breaks";
 import DescriptionToggle from "./DescriptionToggle";
 import ImageProtection from "./ImageProtection";
-import ProtectedImage from "./ProtectedImage";
 import CategoryActions from "./CategoryActions";
 import CategoryClient from "./CategoryClient";
 import { generateCategoryMetaDescription } from "../../lib/metaUtils";

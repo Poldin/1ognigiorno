@@ -9,7 +9,6 @@ import { generateProductMetaDescription } from "../../lib/metaUtils";
 // removed headers to keep ISR static
 
 type CategoryItem = Tables<'products_categories_items'>;
-type CoverItem = Tables<'products_cover_items'>;
 
 /**
  * Server-side data fetching for individual products
@@ -89,7 +88,7 @@ async function getProductWithCategory(slugOrId: string): Promise<ProductWithCate
         slug: null // Cover items don't have slugs
       };
       // Remove properties that don't exist in CategoryItem
-      const { order, product_id, ...categoryItemFormat } = productForPage;
+      const {...categoryItemFormat } = productForPage;
       // Get selling links for cover items (use the cover item ID)
       const sellingLinks = await getProductSellingLinks(coverProduct.id);
       return {
