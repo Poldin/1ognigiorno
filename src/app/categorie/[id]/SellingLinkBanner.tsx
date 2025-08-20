@@ -65,19 +65,6 @@ export default function SellingLinkBanner({ sellingLink, colorIndex = 0 }: Selli
       {/* Contenuto testuale - stesso padding delle card prodotto */}
       <div className={`p-4 ${bgColor}`}>
         <div className="flex items-center gap-2">
-          <svg 
-            className="w-4 h-4 text-gray-300" 
-            fill="none" 
-            stroke="currentColor" 
-            viewBox="0 0 24 24"
-          >
-            <path 
-              strokeLinecap="round" 
-              strokeLinejoin="round" 
-              strokeWidth={2} 
-              d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" 
-            />
-          </svg>
           <div className="overflow-hidden relative group">
             {((sellingLink.calltoaction || sellingLink.name || 'Scopri di più').length > 25) ? (
               <h3 className="font-semibold text-white font-spacegrotesk whitespace-nowrap">
