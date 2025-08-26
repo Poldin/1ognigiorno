@@ -233,7 +233,7 @@ export default function CategoryClient({ products, sellingLinks }: CategoryClien
   };
 
   return (
-    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2 md:gap-4">
       {renderProductsWithAds()}
     </div>
   );

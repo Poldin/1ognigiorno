@@ -11,9 +11,9 @@ export default function DescriptionToggle({ children }: DescriptionToggleProps) 
   const [isExpanded, setIsExpanded] = useState(false);
 
   return (
-    <div className="max-w-4xl">
+    <div className="w-full max-w-none">
       <div 
-        className={`prose prose-invert text-left transition-all duration-300 overflow-hidden ${
+        className={`prose prose-invert text-justify transition-all duration-300 overflow-hidden ${
           isExpanded ? '' : 'line-clamp-3'
         }`}
       >

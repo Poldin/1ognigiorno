@@ -1,4 +1,4 @@
-import HeaderDark from "../../components/HeaderDark";
+import HeaderPcore from "../../components/HeaderPcore";
 import FooterDark from "../../components/FooterDark";
 import Image from "next/image";
 import { supabase } from "../../lib/supabase";
@@ -10,7 +10,7 @@ import remarkGfm from "remark-gfm";
 import remarkBreaks from "remark-breaks";
 import DescriptionToggle from "./DescriptionToggle";
 import ImageProtection from "./ImageProtection";
-import CategoryActions from "./CategoryActions";
+
 import CategoryClient from "./CategoryClient";
 import { generateCategoryMetaDescription } from "../../lib/metaUtils";
 
@@ -166,17 +166,14 @@ export default async function CategoriaPage({ params }: { params: Promise<{ id: 
 
   return (
     <div className="min-h-screen bg-gray-950 text-white">
-      <HeaderDark shareData={shareData} />
+      <HeaderPcore shareData={shareData} />
       <ImageProtection />
 
-      <main className="max-w-6xl mx-auto px-4 py-8">
-        {/* Back and Share Buttons */}
-        <CategoryActions shareData={shareData} />
-
+      <main className="max-w-6xl mx-auto px-1 md:px-4 py-8">
         {/* Hero section with expert avatar, title, description */}
-        <div className="flex flex-col items-center text-center gap-6 mb-12">
+        <div className="flex flex-col items-center gap-6 mb-12 px-3 md:px-0">
           {category.expertImageUrl ? (
-            <div className="relative w-40 h-40 md:w-48 md:h-48 rounded-full overflow-hidden border-2 border-white/20 shadow-2xl">
+            <div className="relative w-48 h-48 md:w-48 md:h-48 rounded-full overflow-hidden border-2 border-white/20 shadow-2xl">
               <Image 
                 src={category.expertImageUrl} 
                 alt="Responsabile categoria" 
@@ -186,7 +183,7 @@ export default async function CategoriaPage({ params }: { params: Promise<{ id: 
               />
             </div>
           ) : null}
-          <h1 className="text-3xl md:text-5xl font-medium">{category.name}</h1>
+          <h1 className="text-3xl md:text-5xl font-medium text-left w-full">{category.name}</h1>
           {category.category_description ? (
             <DescriptionToggle>
               <ReactMarkdown
@@ -202,7 +199,7 @@ export default async function CategoriaPage({ params }: { params: Promise<{ id: 
                     <h3 className="text-lg md:text-xl font-semibold text-white mt-4 mb-2" {...props} />
                   ),
                   p: (props) => (
-                    <p className="text-gray-300 leading-relaxed font-extralight" {...props} />
+                    <p className="text-gray-300 leading-relaxed font-extralight text-justify" {...props} />
                   ),
                   strong: (props) => (
                     <strong className="font-semibold text-white" {...props} />
