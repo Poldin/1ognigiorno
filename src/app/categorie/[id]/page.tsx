@@ -1,5 +1,5 @@
 import HeaderPcore from "../../components/HeaderPcore";
-import FooterDark from "../../components/FooterDark";
+import FooterPcore from "../../components/FooterPcore";
 import Image from "next/image";
 import { supabase } from "../../lib/supabase";
 import { Tables } from "../../lib/database.types";
@@ -231,7 +231,7 @@ export default async function CategoriaPage({ params }: { params: Promise<{ id: 
         <CategoryClient products={products} sellingLinks={sellingLinks} />
       </main>
 
-      <FooterDark />
+      <FooterPcore shareData={shareData} />
     </div>
   );
 }
