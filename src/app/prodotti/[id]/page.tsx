@@ -1,5 +1,5 @@
-import HeaderDark from "../../components/HeaderDark";
-import FooterDark from "../../components/FooterDark";
+import HeaderPcore from "../../components/HeaderPcore";
+import FooterPcore from "../../components/FooterPcore";
 import { Tables } from "../../lib/database.types";
 import { supabase } from "../../lib/supabase";
 import { Metadata } from "next";
@@ -283,12 +283,12 @@ export default async function ProductPage({
 
     return (
       <div className="min-h-screen bg-gray-950 text-white">
-        <HeaderDark shareData={shareData} />
+        <HeaderPcore shareData={shareData} />
         
         {/* Pass data to client component for interactive features */}
         <ProductClient product={product} categorySlug={categorySlug} shareData={shareData} sellingLinks={sellingLinks} />
         
-        <FooterDark />
+        <FooterPcore shareData={shareData} />
       </div>
     );
   } catch (error) {

@@ -1,6 +1,7 @@
 import HeaderPcore from "../../components/HeaderPcore";
 import FooterPcore from "../../components/FooterPcore";
 import Image from "next/image";
+import Link from "next/link";
 import { supabase } from "../../lib/supabase";
 import { Tables } from "../../lib/database.types";
 import { Metadata } from "next";
@@ -18,7 +19,7 @@ type Category = Tables<'products_categories'>;
 type CategoryItem = Tables<'products_categories_items'>;
 
 interface CategoryPageData {
-  category: Category & { expertImageUrl?: string | null };
+  category: Category & { expertImageUrl?: string | null; expertName?: string | null; expertId?: string | null };
   products: CategoryItem[];
   sellingLinks: SellingLink[];
 }
@@ -74,16 +75,18 @@ async function getCategoryData(slugOrId: string): Promise<CategoryPageData | nul
     return null;
   }
 
-  // Fetch expert image if present
+  // Fetch expert image and name if present
   let expertImageUrl: string | null = null;
+  let expertName: string | null = null;
   if (category.expert_id) {
     const { data: profile, error: profileError } = await supabase
       .from('profile')
-      .select('img_url')
+      .select('img_url, nome')
       .eq('id', category.expert_id)
       .single();
     if (!profileError) {
       expertImageUrl = profile?.img_url ?? null;
+      expertName = profile?.nome ?? null;
     }
   }
 
@@ -112,7 +115,7 @@ async function getCategoryData(slugOrId: string): Promise<CategoryPageData | nul
     .filter((link): link is SellingLink => link !== null);
 
   return {
-    category: { ...category, expertImageUrl },
+    category: { ...category, expertImageUrl, expertName, expertId: category.expert_id },
     products: products || [],
     sellingLinks: categorySellingLinks,
   };
@@ -173,14 +176,41 @@ export default async function CategoriaPage({ params }: { params: Promise<{ id: 
         {/* Hero section with expert avatar, title, description */}
         <div className="flex flex-col items-center gap-6 mb-12 px-3 md:px-0">
           {category.expertImageUrl ? (
-            <div className="relative w-48 h-48 md:w-48 md:h-48 rounded-full overflow-hidden border-2 border-white/20 shadow-2xl">
-              <Image 
-                src={category.expertImageUrl} 
-                alt="Responsabile categoria" 
-                fill 
-                className="object-cover select-none pointer-events-none" 
-                draggable={false}
-              />
+            <div className="flex flex-col items-center gap-3">
+              {category.expertId ? (
+                <Link href={`/expert/${category.expertId}`} className="group cursor-pointer">
+                  <div className="relative w-48 h-48 md:w-48 md:h-48 rounded-full overflow-hidden border-2 border-white/20 shadow-2xl group-hover:border-white/40 transition-colors">
+                    <Image 
+                      src={category.expertImageUrl} 
+                      alt="Responsabile categoria" 
+                      fill 
+                      className="object-cover group-hover:scale-105 transition-transform duration-300" 
+                      draggable={false}
+                    />
+                  </div>
+                </Link>
+              ) : (
+                <div className="relative w-48 h-48 md:w-48 md:h-48 rounded-full overflow-hidden border-2 border-white/20 shadow-2xl">
+                  <Image 
+                    src={category.expertImageUrl} 
+                    alt="Responsabile categoria" 
+                    fill 
+                    className="object-cover select-none pointer-events-none" 
+                    draggable={false}
+                  />
+                </div>
+              )}
+              {category.expertName && (
+                <div className="bg-white/10 backdrop-blur-sm border border-white/20 rounded-md px-3 py-1">
+                  {category.expertId ? (
+                    <Link href={`/expert/${category.expertId}`} className="group">
+                      <span className="text-white text-sm font-spacegrotesk font-medium group-hover:text-gray-300 transition-colors cursor-pointer">{category.expertName}</span>
+                    </Link>
+                  ) : (
+                    <span className="text-white text-sm font-spacegrotesk font-medium">{category.expertName}</span>
+                  )}
+                </div>
+              )}
             </div>
           ) : null}
           <h1 className="text-3xl md:text-5xl font-medium text-left w-full">{category.name}</h1>

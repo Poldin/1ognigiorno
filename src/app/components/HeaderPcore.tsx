@@ -45,7 +45,7 @@ export default function HeaderPcore({ shareData }: HeaderPcoreProps) {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-16">
           {/* Logo PCore */}
-          <Link href="/" className="flex-shrink-0">
+          <Link href="" className="flex-shrink-0">
             <div className="w-auto h-10 bg-white rounded-md flex items-center justify-center px-3">
               <span className="text-black text-lg font-medium tracking-tight font-spacegrotesk">PCore</span>
             </div>
