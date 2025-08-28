@@ -1,25 +1,49 @@
-"use client";
+import HeaderPcore from "./components/HeaderPcore";
+import FooterPcore from "./components/FooterPcore";
+import PcoreHomeContent from "./components/PcoreHomeContent";
+import { supabase } from "./lib/supabase";
+import { Tables } from "./lib/database.types";
 
-import Header from "./components/Header";
-import Footer from "./components/Footer";
-import HomeContent from "./components/HomeContent";
-import { useScrollTracking, usePageTracking } from "./lib/useAnalytics";
+type CategoryItem = Tables<'products_categories_items'>;
 
-export default function Home() {
-  // Analytics tracking
-  useScrollTracking();
-  usePageTracking('homepage');
+const CATEGORY_ID = '721c3aff-7a1f-4a54-aa22-869d5fe6f04f';
+
+// Server-side data fetching
+async function getCategoryProducts(): Promise<CategoryItem[]> {
+  try {
+    const { data, error } = await supabase
+      .from('products_categories_items')
+      .select('*')
+      .eq('category_id', CATEGORY_ID)
+      .eq('is_public', true)
+      .order('created_at', { ascending: false });
+
+    if (error) {
+      console.error('Error fetching category products:', error);
+      return [];
+    }
+
+    return data || [];
+  } catch (error) {
+    console.error('Unexpected error fetching category products:', error);
+    return [];
+  }
+}
+
+export default async function Home() {
+  // Fetch data server-side
+  const products = await getCategoryProducts();
   
   return (
     <div className="min-h-screen bg-white flex flex-col">
-      <Header />
+      <HeaderPcore />
 
       {/* Main content area that grows to push footer down */}
       <main className="flex-1">
-        <HomeContent />
+        <PcoreHomeContent products={products} />
       </main>
 
-      <Footer />
+      <FooterPcore />
     </div>
   );
 }

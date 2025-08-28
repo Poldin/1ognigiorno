@@ -21,8 +21,8 @@ const spaceGrotesk = Space_Grotesk({
 });
 
 export const metadata: Metadata = {
-  title: `IL PRODOTTO DEL GIORNO - ${new Date().getDate().toString().padStart(2, '0')}-${(new Date().getMonth() + 1).toString().padStart(2, '0')}`,
-  description: "Il prodotto del giorno è la piattaforma che ogni giorno scopre, valorizza e rende virali prodotti eccezionali che meritano di essere conosciuti dal mondo.",
+  title: `PCore`,
+  description: "PCore - condividi con chi sai che apprezza.",
 };
 
 export default function RootLayout({
