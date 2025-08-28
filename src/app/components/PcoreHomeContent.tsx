@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from 'react';
-import { ArrowRight, Zap, Users, TrendingUp, Star, ShoppingBag, Wallet, ChevronLeft, ChevronRight } from 'lucide-react';
+import { ArrowRight, Zap, Users, TrendingUp, Star, ShoppingBag, Wallet } from 'lucide-react';
 import { getProductImageUrl } from '../lib/categoryUtils';
 import { Tables } from '../lib/database.types';
 import { useScrollTracking, usePageTracking } from '../lib/useAnalytics';
@@ -18,6 +18,136 @@ export default function PcoreHomeContent({ products }: PcoreHomeContentProps) {
   const [currentCard, setCurrentCard] = useState(0);
   const [isAnimating, setIsAnimating] = useState(true);
   const router = useRouter();
+
+  // CSS per le animazioni personalizzate
+  const animationStyles = `
+    @keyframes fade-in-up {
+      0% {
+        opacity: 0;
+        transform: translateY(30px);
+      }
+      100% {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+    
+    @keyframes slide-in-left {
+      0% {
+        opacity: 0;
+        transform: translateX(-50px);
+      }
+      100% {
+        opacity: 1;
+        transform: translateX(0);
+      }
+    }
+    
+    @keyframes slide-in-right {
+      0% {
+        opacity: 0;
+        transform: translateX(50px);
+      }
+      100% {
+        opacity: 1;
+        transform: translateX(0);
+      }
+    }
+    
+    @keyframes scale-in {
+      0% {
+        opacity: 0;
+        transform: scale(0.8);
+      }
+      100% {
+        opacity: 1;
+        transform: scale(1);
+      }
+    }
+    
+    @keyframes glow-pulse {
+      0%, 100% {
+        text-shadow: 0 0 5px rgba(59, 130, 246, 0.5);
+      }
+      50% {
+        text-shadow: 0 0 20px rgba(59, 130, 246, 0.8), 0 0 30px rgba(59, 130, 246, 0.5);
+      }
+    }
+    
+    @keyframes rainbow-text {
+      0% { color: #3b82f6; }
+      16% { color: #8b5cf6; }
+      32% { color: #ec4899; }
+      48% { color: #f59e0b; }
+      64% { color: #10b981; }
+      80% { color: #06b6d4; }
+      100% { color: #3b82f6; }
+    }
+    
+    @keyframes typing {
+      from { width: 0; }
+      to { width: 100%; }
+    }
+    
+    @keyframes blink {
+      0%, 50% { border-color: transparent; }
+      51%, 100% { border-color: #3b82f6; }
+    }
+    
+    .animate-fade-in-up {
+      animation: fade-in-up 0.8s ease-out forwards;
+    }
+    
+    .animate-fade-in-up-delay-1 {
+      opacity: 0;
+      animation: fade-in-up 0.8s ease-out 1.5s forwards;
+    }
+    
+    .animate-fade-in-up-delay-2 {
+      opacity: 0;
+      animation: fade-in-up 0.8s ease-out 3s forwards;
+    }
+    
+    .animate-slide-in-left {
+      animation: slide-in-left 1s ease-out forwards;
+    }
+    
+    .animate-slide-in-right {
+      animation: slide-in-right 1s ease-out forwards;
+    }
+    
+    .animate-scale-in {
+      animation: scale-in 0.8s ease-out forwards;
+    }
+    
+    .animate-glow-pulse {
+      animation: glow-pulse 2s ease-in-out infinite;
+    }
+    
+    .animate-rainbow-text {
+      animation: rainbow-text 3s linear infinite;
+    }
+    
+    .animate-typing {
+      overflow: hidden;
+      border-right: 2px solid #3b82f6;
+      white-space: nowrap;
+      animation: typing 3s steps(40, end), blink 0.75s step-end infinite;
+    }
+    
+    .hover-glow:hover {
+      animation: glow-pulse 1s ease-in-out infinite;
+    }
+    
+    .keyword-highlight {
+      background: linear-gradient(45deg, #3b82f6, #8b5cf6, #ec4899);
+      background-size: 200% 200%;
+      -webkit-background-clip: text;
+      background-clip: text;
+      -webkit-text-fill-color: transparent;
+      animation: rainbow-text 4s linear infinite;
+    }
+  `;
 
   // Analytics tracking
   useScrollTracking();
@@ -77,6 +207,7 @@ export default function PcoreHomeContent({ products }: PcoreHomeContentProps) {
 
   return (
     <div className="min-h-screen bg-gray-900 text-white">
+      <style jsx>{animationStyles}</style>
       {/* Hero Section con animazione cards */}
       <section className="relative min-h-screen flex items-center justify-center overflow-hidden">
         <div className="absolute inset-0 bg-gradient-to-br from-gray-900 via-gray-800 to-black"></div>
@@ -87,7 +218,7 @@ export default function PcoreHomeContent({ products }: PcoreHomeContentProps) {
             <div className="space-y-8">
               <div className="animate-fade-in-up">
                 <h1 className="text-5xl lg:text-7xl font-bold tracking-tight font-spacegrotesk">
-                  La rivoluzione dell&apos;
+                  La <span className="keyword-highlight">rivoluzione</span> dell&apos;
                   <span className="text-transparent bg-clip-text bg-gradient-to-r from-white to-gray-300">
                     affiliate marketing
                   </span>
@@ -117,12 +248,12 @@ export default function PcoreHomeContent({ products }: PcoreHomeContentProps) {
               {products.length > 0 ? (
                 <>
                   {/* Singola Card */}
-                  <div className="relative w-96 h-[500px] mb-8">
+                  <div className="relative w-96 h-[500px] mb-2">
                     <div className="w-full h-full bg-white rounded-2xl shadow-2xl overflow-hidden relative">
                       {/* Immagine a card intera */}
                       <div className="w-full h-full relative overflow-hidden bg-gray-100">
                         {products.map((product, index) => (
-                          <img
+                          <Image
                             key={product.id}
                             src={getProductImageUrl(product.image_url)}
                             alt={product.name || 'Product'}
@@ -135,24 +266,19 @@ export default function PcoreHomeContent({ products }: PcoreHomeContentProps) {
                               const target = e.target as HTMLImageElement;
                               target.src = '/api/placeholder/300/400';
                             }}
+                            width={300}
+                            height={400}
                           />
                         ))}
-                      </div>
-                      
-                      {/* Solo pulsante dentro la card */}
-                      <div className="absolute bottom-4 left-4 right-4">
-                        <button className="w-full py-3 bg-white text-black rounded-lg font-medium hover:bg-gray-200 transition-all duration-200 hover:scale-105 shadow-lg">
-                          Acquista
-                        </button>
                       </div>
                     </div>
                   </div>
                   
-                  {/* Titolo sotto la card */}
-                  <div className="text-center">
-                    <h3 className="font-semibold text-2xl mb-4 text-white leading-tight max-w-xs transition-all duration-300">
-                      {products[currentCard]?.name || 'Prodotto senza nome'}
-                    </h3>
+                  {/* Pulsante fuori dalla card */}
+                  <div className="w-96">
+                    <button className="w-full py-3 bg-white text-black rounded-lg font-spacegrotesk font-semibold hover:bg-gray-200 transition-all duration-200 hover:scale-105 shadow-lg">
+                      Acquista
+                    </button>
                   </div>
                 </>
               ) : (
@@ -209,7 +335,7 @@ export default function PcoreHomeContent({ products }: PcoreHomeContentProps) {
             <div className="order-1 lg:order-2">
               <div className="hover:translate-x-2 transition-transform duration-500">
                 <h2 className="text-4xl lg:text-5xl font-bold mb-6 font-spacegrotesk hover:text-transparent hover:bg-clip-text hover:bg-gradient-to-r hover:from-blue-400 hover:to-purple-400 transition-all duration-500">
-                  Per Esperti, Creator o semplici Privati
+                  Per <span className="keyword-highlight">Esperti</span>, <span className="keyword-highlight">Creator</span> o semplici <span className="keyword-highlight">Privati</span>
                 </h2>
                                   <p className="text-xl text-gray-300 mb-8 leading-relaxed hover:text-gray-100 transition-colors duration-300">
                   Unisciti a PCore e crea la tua collezione personalizzata! Seleziona i prodotti che ami 
@@ -341,7 +467,7 @@ export default function PcoreHomeContent({ products }: PcoreHomeContentProps) {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
           <div className="text-center mb-16 hover:scale-105 transition-transform duration-500">
             <h2 className="text-4xl lg:text-5xl font-bold mb-6 font-spacegrotesk hover:text-transparent hover:bg-clip-text hover:bg-gradient-to-r hover:from-yellow-400 hover:to-orange-400 transition-all duration-500">
-              Come Funziona PCore
+              Come Funziona <span className="keyword-highlight">PCore</span>
             </h2>
             <p className="text-xl text-gray-300 max-w-3xl mx-auto hover:text-gray-100 transition-colors duration-300">
               Il processo è semplice e trasparente. Tre passi per rivoluzionare il tuo approccio all&apos;affiliate marketing.
@@ -409,70 +535,261 @@ export default function PcoreHomeContent({ products }: PcoreHomeContentProps) {
             <div className="hover:translate-x-2 transition-transform duration-500">
               <div>
                 <h2 className="text-4xl lg:text-5xl font-bold mb-6 font-spacegrotesk hover:text-transparent hover:bg-clip-text hover:bg-gradient-to-r hover:from-yellow-400 hover:to-red-400 transition-all duration-500">
-                  Per Brand & E-commerce
+                  Per <span className="keyword-highlight">Brand</span> & <span className="keyword-highlight">E-commerce</span>
                 </h2>
                 <p className="text-xl text-gray-300 mb-8 leading-relaxed hover:text-gray-100 transition-colors duration-300">
-                  Caricate i vostri prodotti su PCore e allineatevi tecnologicamente con una piattaforma 
-                  centralizzata che garantisce visibilità e controllo totale.
+                  PCore permette a chi conosce il proprio pubblico, anche molto piccolo, di arrivare a consigliarlo efficacemente. 
+                  Abbiamo già stretto partnership operative con migliaia di realtà che sono le vere autorità per i loro clienti.
                 </p>
                 <ul className="space-y-4">
                   <li className="flex items-start group hover:translate-x-3 transition-transform duration-300">
                     <Zap className="w-6 h-6 text-yellow-400 mr-3 mt-1 flex-shrink-0 group-hover:scale-125 group-hover:rotate-12 transition-all duration-300" />
                     <div>
                       <h3 className="font-semibold group-hover:text-yellow-300 transition-colors duration-300">Setup Immediato</h3>
-                      <p className="text-gray-400 group-hover:text-gray-300 transition-colors duration-300">Caricate i prodotti e iniziate subito a vendere</p>
+                      <p className="text-gray-400 group-hover:text-gray-300 transition-colors duration-300">Inserite uno script nel vostro e-commerce e caricate i prodotti tramite API o CSV</p>
                     </div>
                   </li>
                   <li className="flex items-start group hover:translate-x-3 transition-transform duration-300">
                     <TrendingUp className="w-6 h-6 text-green-400 mr-3 mt-1 flex-shrink-0 group-hover:scale-125 group-hover:rotate-12 transition-all duration-300" />
                     <div>
-                      <h3 className="font-semibold group-hover:text-green-300 transition-colors duration-300">Crescita Garantita</h3>
-                      <p className="text-gray-400 group-hover:text-gray-300 transition-colors duration-300">Network di creator pronti a promuovere i vostri prodotti</p>
+                      <h3 className="font-semibold group-hover:text-green-300 transition-colors duration-300">Dashboard & Insights</h3>
+                      <p className="text-gray-400 group-hover:text-gray-300 transition-colors duration-300">Dashboard completa per monitorare vendite e ricavare insights utili sui vostri clienti</p>
                     </div>
                   </li>
                   <li className="flex items-start group hover:translate-x-3 transition-transform duration-300">
                     <Star className="w-6 h-6 text-blue-400 mr-3 mt-1 flex-shrink-0 group-hover:scale-125 group-hover:rotate-12 transition-all duration-300" />
                     <div>
-                      <h3 className="font-semibold group-hover:text-blue-300 transition-colors duration-300">Design Centralizzato</h3>
-                      <p className="text-gray-400 group-hover:text-gray-300 transition-colors duration-300">Grafiche coerenti e professionali per tutti i prodotti</p>
+                      <h3 className="font-semibold group-hover:text-blue-300 transition-colors duration-300">Controllo Provvigioni</h3>
+                      <p className="text-gray-400 group-hover:text-gray-300 transition-colors duration-300">Modificate le commissioni quando volete per ottimizzare le vostre strategie</p>
                     </div>
                   </li>
                 </ul>
+                
+                <div className="mt-8">
+                  <a 
+                    href="/docs/brand-ecommerce-guide"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex items-center px-6 py-3 bg-yellow-600 text-white rounded-lg font-medium hover:bg-yellow-700 transition-all duration-300 hover:scale-105"
+                  >
+                    Segui la guida per partire <ArrowRight className="ml-2 w-5 h-5" />
+                  </a>
+                </div>
               </div>
             </div>
             <div className="bg-gradient-to-br from-gray-700 to-gray-800 rounded-2xl p-8 hover:shadow-2xl hover:scale-105 transition-all duration-500 transform">
+              <h4 className="text-xl font-semibold mb-6 text-center">Partnership Operative Attive</h4>
               <div className="space-y-6">
                 <div className="flex items-center justify-between p-4 bg-gray-600 rounded-lg hover:bg-gray-500 transition-all duration-300 transform hover:scale-105 cursor-pointer group">
                   <div className="flex items-center">
                     <ShoppingBag className="w-8 h-8 text-blue-400 mr-3 group-hover:scale-125 group-hover:rotate-12 transition-all duration-300" />
                     <div>
-                      <h4 className="font-semibold group-hover:text-blue-300 transition-colors duration-300">Prodotti Caricati</h4>
-                      <p className="text-gray-400 text-sm">+2,547 questo mese</p>
+                      <h4 className="font-semibold group-hover:text-blue-300 transition-colors duration-300">Ristoranti</h4>
+                      <p className="text-gray-400 text-sm">Autorità gastronomiche</p>
                     </div>
                   </div>
-                  <span className="text-2xl font-bold text-green-400 group-hover:scale-110 transition-transform duration-300">15,432</span>
+                  <span className="text-2xl font-bold text-blue-400 group-hover:scale-110 transition-transform duration-300">1,000</span>
                 </div>
                 <div className="flex items-center justify-between p-4 bg-gray-600 rounded-lg hover:bg-gray-500 transition-all duration-300 transform hover:scale-105 cursor-pointer group">
                   <div className="flex items-center">
                     <Users className="w-8 h-8 text-purple-400 mr-3 group-hover:scale-125 group-hover:rotate-12 transition-all duration-300" />
                     <div>
-                      <h4 className="font-semibold group-hover:text-purple-300 transition-colors duration-300">Creator Attivi</h4>
-                      <p className="text-gray-400 text-sm">+134 questa settimana</p>
+                      <h4 className="font-semibold group-hover:text-purple-300 transition-colors duration-300">B&B e Albergatori</h4>
+                      <p className="text-gray-400 text-sm">Esperti di ospitalità</p>
                     </div>
                   </div>
-                  <span className="text-2xl font-bold text-purple-400 group-hover:scale-110 transition-transform duration-300">3,891</span>
+                  <span className="text-2xl font-bold text-purple-400 group-hover:scale-110 transition-transform duration-300">600</span>
                 </div>
                 <div className="flex items-center justify-between p-4 bg-gray-600 rounded-lg hover:bg-gray-500 transition-all duration-300 transform hover:scale-105 cursor-pointer group">
                   <div className="flex items-center">
-                    <TrendingUp className="w-8 h-8 text-green-400 mr-3 group-hover:scale-125 group-hover:rotate-12 transition-all duration-300" />
+                    <TrendingUp className="w-8 h-8 text-yellow-400 mr-3 group-hover:scale-125 group-hover:rotate-12 transition-all duration-300" />
                     <div>
-                      <h4 className="font-semibold group-hover:text-green-300 transition-colors duration-300">Vendite Generate</h4>
-                      <p className="text-gray-400 text-sm">+18% rispetto al mese scorso</p>
+                      <h4 className="font-semibold group-hover:text-yellow-300 transition-colors duration-300">Artigiani</h4>
+                      <p className="text-gray-400 text-sm">Maestri della qualità</p>
                     </div>
                   </div>
-                  <span className="text-2xl font-bold text-green-400 group-hover:scale-110 transition-transform duration-300">€1.2M</span>
+                  <span className="text-2xl font-bold text-yellow-400 group-hover:scale-110 transition-transform duration-300">350</span>
                 </div>
               </div>
+              <div className="mt-6 p-4 bg-green-900/30 border border-green-700 rounded-lg hover:bg-green-800/40 hover:border-green-500 transition-all duration-300">
+                <div className="text-center">
+                  <p className="text-green-400 font-semibold mb-2">Obiettivo: Vendere di più e vendere meglio</p>
+                  <p className="text-sm text-gray-300">Aumentare quantità e qualità delle vendite con dati e insights</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Sezione Emotiva - Il Potere della Raccomandazione */}
+      <section className="py-20 bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 relative overflow-hidden">
+        {/* Background Pattern */}
+        <div className="absolute inset-0 opacity-10">
+          <div className="absolute top-20 left-20 w-32 h-32 bg-blue-500 rounded-full animate-pulse"></div>
+          <div className="absolute bottom-32 right-16 w-24 h-24 bg-green-500 rounded-full animate-bounce"></div>
+          <div className="absolute top-1/2 left-1/3 w-16 h-16 bg-yellow-500 rounded-full animate-ping"></div>
+        </div>
+        
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+          <div className="text-center mb-16">
+            <h2 className="text-4xl lg:text-5xl font-bold mb-6 font-spacegrotesk text-transparent bg-clip-text bg-gradient-to-r from-blue-400 via-purple-400 to-green-400">
+              Immagina il <span className="keyword-highlight">Potere</span> di una <span className="keyword-highlight">Raccomandazione Autentica. Scalata a milioni di utenti.</span>
+            </h2>
+            <p className="text-xl text-gray-300 max-w-4xl mx-auto leading-relaxed">
+              Non è solo una vendita. È la fiducia che si trasforma in successo, 
+              la passione che diventa profitto, l&apos;autenticità che crea connessioni durature.
+            </p>
+          </div>
+
+          <div className="grid lg:grid-cols-2 gap-12 items-center">
+            {/* Lato Emotivo */}
+            <div className="space-y-8">
+              <div className="space-y-6">
+                <div className="group hover:translate-x-2 transition-all duration-500">
+                  <h3 className="text-2xl font-bold mb-4 text-white group-hover:text-blue-300 transition-colors">
+                    🎯 Il <span className="keyword-highlight">Cliente</span> che Ti <span className="keyword-highlight">Cerca</span>
+                  </h3>
+                  <p className="text-gray-300 leading-relaxed group-hover:text-white transition-colors">
+                    Quando un ristoratore consiglia il tuo olio d&apos;oliva, non sta solo vendendo un prodotto. 
+                    Sta condividendo una parte della sua passione culinaria. Quel cliente non compra solo olio, 
+                    compra l&apos;esperienza e la fiducia di chi conosce davvero la qualità.
+                  </p>
+                </div>
+                
+                <div className="group hover:translate-x-2 transition-all duration-500">
+                  <h3 className="text-2xl font-bold mb-4 text-white group-hover:text-green-300 transition-colors">
+                    💝 La <span className="keyword-highlight">Vendita</span> che <span className="keyword-highlight">Conta</span>
+                  </h3>
+                  <p className="text-gray-300 leading-relaxed group-hover:text-white transition-colors">
+                    Ogni vendita attraverso PCore non è un numero, è una storia. È il B&B che consiglia 
+                    i tuoi prodotti locali agli ospiti, creando ricordi indimenticabili. È l&apos;artigiano 
+                    che apprezza la qualità e la trasmette ai suoi clienti più fedeli.
+                  </p>
+                </div>
+                
+                <div className="group hover:translate-x-2 transition-all duration-500">
+                  <h3 className="text-2xl font-bold mb-4 text-white group-hover:text-purple-300 transition-colors">
+                    🚀 Il <span className="keyword-highlight">Futuro</span> delle Tue <span className="keyword-highlight">Vendite</span>
+                  </h3>
+                  <p className="text-gray-300 leading-relaxed group-hover:text-white transition-colors">
+                    Con PCore, ogni partner diventa un ambasciatore autentico del tuo brand. 
+                    Non più vendite fredde, ma raccomandazioni calde che nascono dalla conoscenza 
+                    diretta e dall&apos;esperienza personale.
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            {/* Animazione Vendita */}
+            <div className="relative">
+              <div className="bg-gradient-to-br from-gray-800 to-gray-700 rounded-2xl p-8 relative overflow-hidden">
+                {/* Simulazione Dashboard in Tempo Reale */}
+                <div className="space-y-6">
+                  <div className="flex items-center justify-between mb-6">
+                    <h4 className="text-xl font-bold text-white">Dashboard Live</h4>
+                    <div className="flex items-center space-x-2">
+                      <div className="w-2 h-2 bg-green-400 rounded-full animate-pulse"></div>
+                      <span className="text-green-400 text-sm font-medium">In tempo reale</span>
+                    </div>
+                  </div>
+                  
+                  {/* Vendita che Appare */}
+                  <div className="space-y-4">
+                    <div className="bg-green-900/30 border border-green-500 rounded-lg p-4 animate-fade-in-up transform hover:scale-105 transition-all duration-300">
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center space-x-3">
+                          <div className="w-12 h-12 bg-gradient-to-br from-green-400 to-green-600 rounded-lg flex items-center justify-center">
+                            <span className="text-white font-bold">€</span>
+                          </div>
+                          <div>
+                            <p className="text-white font-semibold">Nuova Vendita!</p>
+                            <p className="text-green-300 text-sm">Ristorante &quot;Da Mario&quot; - Milano</p>
+                          </div>
+                        </div>
+                        <div className="text-right">
+                          <p className="text-2xl font-bold text-green-400">€127</p>
+                          <p className="text-green-300 text-sm">+€19 commissione</p>
+                        </div>
+                      </div>
+                      <div className="mt-3 text-sm text-gray-300">
+                        &quot;Il mio chef ha consigliato questo olio ai nostri ospiti dopo averlo provato&quot;
+                      </div>
+                    </div>
+                    
+                    <div className="bg-blue-900/30 border border-blue-500 rounded-lg p-4 animate-fade-in-up-delay-1 transform hover:scale-105 transition-all duration-300">
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center space-x-3">
+                          <div className="w-12 h-12 bg-gradient-to-br from-blue-400 to-blue-600 rounded-lg flex items-center justify-center">
+                            <span className="text-white font-bold">€</span>
+                          </div>
+                          <div>
+                            <p className="text-white font-semibold">Altra Vendita!</p>
+                            <p className="text-blue-300 text-sm">B&B &quot;Vista Mare&quot; - Cinque Terre</p>
+                          </div>
+                        </div>
+                        <div className="text-right">
+                          <p className="text-2xl font-bold text-blue-400">€89</p>
+                          <p className="text-blue-300 text-sm">+€13 commissione</p>
+                        </div>
+                      </div>
+                      <div className="mt-3 text-sm text-gray-300">
+                        &quot;I nostri ospiti volevano portarsi a casa i sapori della Liguria&quot;
+                      </div>
+                    </div>
+                    
+                    <div className="bg-purple-900/30 border border-purple-500 rounded-lg p-4 animate-fade-in-up-delay-2 transform hover:scale-105 transition-all duration-300">
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center space-x-3">
+                          <div className="w-12 h-12 bg-gradient-to-br from-purple-400 to-purple-600 rounded-lg flex items-center justify-center">
+                            <span className="text-white font-bold">€</span>
+                          </div>
+                          <div>
+                            <p className="text-white font-semibold">Ancora una!</p>
+                            <p className="text-purple-300 text-sm">Artigiano &quot;Bottega del Gusto&quot;</p>
+                          </div>
+                        </div>
+                        <div className="text-right">
+                          <p className="text-2xl font-bold text-purple-400">€156</p>
+                          <p className="text-purple-300 text-sm">+€23 commissione</p>
+                        </div>
+                      </div>
+                      <div className="mt-3 text-sm text-gray-300">
+                        &quot;Un cliente abituale che si fida sempre dei miei consigli&quot;
+                      </div>
+                    </div>
+                  </div>
+                  
+                  {/* Totale Animato */}
+                  <div className="border-t border-gray-600 pt-4 mt-6">
+                    <div className="flex items-center justify-between">
+                      <span className="text-gray-300 font-medium">Vendite di oggi</span>
+                      <div className="text-right">
+                        <p className="text-3xl font-bold text-white">€372</p>
+                        <p className="text-green-400 font-medium">+€55 le tue commissioni</p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                
+                {/* Effetti Luminosi */}
+                <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-br from-green-400/20 to-transparent rounded-full blur-xl animate-pulse"></div>
+                <div className="absolute bottom-0 left-0 w-24 h-24 bg-gradient-to-tr from-blue-400/20 to-transparent rounded-full blur-xl animate-pulse"></div>
+              </div>
+            </div>
+          </div>
+          
+          {/* Messaggio Finale Emotivo */}
+          <div className="text-center mt-16">
+            <div className="bg-gradient-to-r from-gray-800/50 to-gray-700/50 rounded-2xl p-8 backdrop-blur-sm border border-gray-600 hover:border-gray-500 transition-all duration-500">
+              <h3 className="text-2xl font-bold mb-4 text-transparent bg-clip-text bg-gradient-to-r from-yellow-400 to-orange-400">
+                Questa è la <span className="keyword-highlight">Differenza</span> di <span className="keyword-highlight">PCore</span>
+              </h3>
+              <p className="text-xl text-gray-300 leading-relaxed max-w-4xl mx-auto animate-fade-in-up">
+                Non vendiamo solo prodotti. Creiamo <span className="keyword-highlight">connessioni autentiche</span> tra chi sa consigliare bene 
+                e chi cerca <span className="keyword-highlight">qualità vera</span>. Ogni vendita è una <span className="keyword-highlight">testimonianza di fiducia</span>, 
+                ogni commissione è il riconoscimento del <span className="keyword-highlight">valore</span> che porti ai tuoi clienti.
+              </p>
             </div>
           </div>
         </div>
@@ -483,7 +800,7 @@ export default function PcoreHomeContent({ products }: PcoreHomeContentProps) {
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <div>
             <h2 className="text-4xl lg:text-5xl font-bold mb-6 font-spacegrotesk">
-              Pronto a rivoluzionare il tuo business?
+              Pronto a <span className="keyword-highlight">rivoluzionare</span> il tuo <span className="keyword-highlight">business</span>?
             </h2>
             <p className="text-xl text-gray-300 mb-10 leading-relaxed">
               Unisciti alla piattaforma che sta cambiando le regole dell&apos;affiliate marketing. 

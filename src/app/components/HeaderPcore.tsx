@@ -49,8 +49,14 @@ export default function HeaderPcore({ shareData }: HeaderPcoreProps) {
             <span className="text-white text-2xl font-bold tracking-tight font-spacegrotesk">PCore</span>
           </Link>
           
-          {/* Desktop Share Button */}
-          <div className="hidden md:flex items-center">
+          {/* Desktop Buttons */}
+          <div className="hidden md:flex items-center space-x-3">
+            <Link 
+              href="/login"
+              className="text-white text-lg font-bold tracking-tight font-spacegrotesk hover:opacity-80 transition-opacity duration-200"
+            >
+              Accedi
+            </Link>
             <button 
               onClick={handleNativeShare}
               className="inline-flex items-center px-4 py-2 bg-white text-black rounded-md text-sm font-medium hover:bg-gray-200 transition-colors"
@@ -59,8 +65,14 @@ export default function HeaderPcore({ shareData }: HeaderPcoreProps) {
             </button>
           </div>
 
-          {/* Mobile Share Icon */}
-          <div className="md:hidden">
+          {/* Mobile Buttons */}
+          <div className="md:hidden flex items-center space-x-4">
+            <Link 
+              href="/login"
+              className="text-white text-lg font-bold tracking-tight font-spacegrotesk hover:opacity-80 transition-opacity duration-200"
+            >
+              Accedi
+            </Link>
             <button
               onClick={handleNativeShare}
               className="inline-flex items-center justify-center p-2 rounded-md text-gray-300 hover:text-white hover:bg-gray-800 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-blue-500 transition-colors"

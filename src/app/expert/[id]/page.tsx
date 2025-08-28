@@ -1,13 +1,11 @@
 import HeaderPcore from "../../components/HeaderPcore";
 import FooterPcore from "../../components/FooterPcore";
 import Image from "next/image";
-import Link from "next/link";
 import ExpertCategoriesClient from "./ExpertCategoriesClient";
 import { supabase } from "../../lib/supabase";
 import { Tables } from "../../lib/database.types";
 import { Metadata } from "next";
 import { notFound } from "next/navigation";
-import { generateCategoryMetaDescription } from "../../lib/metaUtils";
 
 type Expert = Tables<'profile'>;
 type Category = Tables<'products_categories'>;

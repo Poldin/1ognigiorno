@@ -1,7 +1,6 @@
 "use client";
 
 import Link from "next/link";
-import { Share2 } from "lucide-react";
 import { trackSocialShare } from "../lib/gtag";
 
 interface FooterPcoreProps {
