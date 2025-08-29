@@ -795,22 +795,169 @@ export default function PcoreHomeContent({ products }: PcoreHomeContentProps) {
         </div>
       </section>
 
+      {/* Sezione Prezzi */}
+      <section className="py-20 bg-gradient-to-br from-gray-800 via-gray-900 to-black relative overflow-hidden">
+        {/* Background Pattern */}
+        <div className="absolute inset-0 opacity-10">
+          <div className="absolute top-16 left-16 w-28 h-28 bg-green-400 rounded-full animate-pulse"></div>
+          <div className="absolute bottom-24 right-24 w-20 h-20 bg-blue-400 rounded-full animate-bounce"></div>
+          <div className="absolute top-2/3 left-1/4 w-14 h-14 bg-yellow-400 rounded-full animate-ping"></div>
+        </div>
+        
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+          <div className="text-center mb-16">
+            <h2 className="text-4xl lg:text-5xl font-bold mb-6 font-spacegrotesk hover:text-transparent hover:bg-clip-text hover:bg-gradient-to-r hover:from-green-400 hover:to-blue-400 transition-all duration-500">
+              Ok, ma quanto costa <span className="keyword-highlight">PCore</span>?
+            </h2>
+            <p className="text-xl text-gray-300 max-w-4xl mx-auto leading-relaxed hover:text-gray-100 transition-colors duration-300">
+              La risposta ti sorprenderà. Il nostro modello è pensato per crescere insieme a te.
+            </p>
+          </div>
+
+          <div className="grid lg:grid-cols-2 gap-12 items-center">
+            {/* Lato Sinistro - Messaggio Principale */}
+            <div className="space-y-8">
+              <div className="bg-gradient-to-br from-green-900/40 to-green-800/40 rounded-2xl p-8 border border-green-600/30 hover:border-green-500/50 transition-all duration-500 hover:scale-105">
+                <div className="text-center">
+                  <div className="mb-6">
+                    <span className="text-6xl lg:text-7xl font-bold text-green-400 font-spacegrotesk">€0</span>
+                    <div className="text-lg text-green-300 mt-2">Costo iniziale</div>
+                  </div>
+                  <h3 className="text-2xl font-bold text-white mb-4">
+                    <span className="keyword-highlight">Zero costi</span> finché non <span className="keyword-highlight">guadagni</span>
+                  </h3>
+                  <p className="text-gray-300 leading-relaxed">
+                    Nessun abbonamento, nessun setup fee, nessun costo nascosto. 
+                    Guadagniamo solo se Brand e Creator guadagnano.
+                  </p>
+                </div>
+              </div>
+              
+              <div className="space-y-4">
+                <div className="flex items-start group hover:translate-x-2 transition-transform duration-300">
+                  <div className="w-6 h-6 bg-green-400 rounded-full flex items-center justify-center mr-4 mt-1 group-hover:scale-125 transition-transform duration-300">
+                    <span className="text-black font-bold text-sm">✓</span>
+                  </div>
+                  <div>
+                    <h4 className="font-semibold text-white group-hover:text-green-300 transition-colors">E-commerce & Brand</h4>
+                    <p className="text-gray-400 group-hover:text-gray-300 transition-colors">Caricamento prodotti gratuito, dashboard completa, nessun limite</p>
+                  </div>
+                </div>
+                
+                <div className="flex items-start group hover:translate-x-2 transition-transform duration-300">
+                  <div className="w-6 h-6 bg-green-400 rounded-full flex items-center justify-center mr-4 mt-1 group-hover:scale-125 transition-transform duration-300">
+                    <span className="text-black font-bold text-sm">✓</span>
+                  </div>
+                  <div>
+                    <h4 className="font-semibold text-white group-hover:text-green-300 transition-colors">Creator & Esperti</h4>
+                    <p className="text-gray-400 group-hover:text-gray-300 transition-colors">Creazione collezioni illimitata, strumenti di promozione inclusi</p>
+                  </div>
+                </div>
+                
+                <div className="flex items-start group hover:translate-x-2 transition-transform duration-300">
+                  <div className="w-6 h-6 bg-green-400 rounded-full flex items-center justify-center mr-4 mt-1 group-hover:scale-125 transition-transform duration-300">
+                    <span className="text-black font-bold text-sm">✓</span>
+                  </div>
+                  <div>
+                    <h4 className="font-semibold text-white group-hover:text-green-300 transition-colors">Gestione Pagamenti</h4>
+                    <p className="text-gray-400 group-hover:text-gray-300 transition-colors">Ci occupiamo noi di tutti i flussi di denaro, tutto a regola d'arte</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Lato Destro - Come Funziona */}
+            <div className="space-y-6">
+              <div className="bg-gradient-to-br from-gray-700 to-gray-800 rounded-2xl p-8 hover:shadow-2xl hover:scale-105 transition-all duration-500">
+                <h3 className="text-2xl font-bold text-white mb-6 text-center">Come Funziona il Nostro Modello</h3>
+                
+                <div className="space-y-6">
+                  <div className="relative">
+                    <div className="bg-blue-900/30 border border-blue-500/50 rounded-lg p-6 hover:bg-blue-800/40 transition-colors duration-300">
+                      <div className="flex items-center justify-between mb-4">
+                        <span className="text-blue-300 font-semibold">Creator guadagna</span>
+                        <span className="text-2xl font-bold text-blue-400">€100</span>
+                      </div>
+                      <div className="w-full bg-gray-600 rounded-full h-2 mb-4">
+                        <div className="bg-blue-400 h-2 rounded-full" style={{width: '91%'}}></div>
+                      </div>
+                      <div className="text-sm text-gray-300">Il creator riceve il 91% delle commissioni</div>
+                    </div>
+                    <div className="absolute -bottom-3 left-1/2 transform -translate-x-1/2">
+                      <div className="bg-gray-900 border border-gray-600 rounded-lg px-3 py-1">
+                        <span className="text-green-400 font-semibold text-sm">€91 al creator</span>
+                      </div>
+                    </div>
+                  </div>
+                  
+                  <div className="relative mt-8">
+                    <div className="bg-green-900/30 border border-green-500/50 rounded-lg p-6 hover:bg-green-800/40 transition-colors duration-300">
+                      <div className="flex items-center justify-between mb-4">
+                        <span className="text-green-300 font-semibold">PCore trattiene</span>
+                        <span className="text-2xl font-bold text-green-400">9%</span>
+                      </div>
+                      <div className="w-full bg-gray-600 rounded-full h-2 mb-4">
+                        <div className="bg-green-400 h-2 rounded-full" style={{width: '9%'}}></div>
+                      </div>
+                      <div className="text-sm text-gray-300">Solo quando c'è una commissione da distribuire</div>
+                    </div>
+                    <div className="absolute -bottom-3 left-1/2 transform -translate-x-1/2">
+                      <div className="bg-gray-900 border border-gray-600 rounded-lg px-3 py-1">
+                        <span className="text-green-400 font-semibold text-sm">€9 a PCore</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                
+                <div className="mt-8 p-4 bg-yellow-900/30 border border-yellow-600/50 rounded-lg">
+                  <div className="text-center">
+                    <p className="text-yellow-300 font-semibold mb-2">💡 Nessuna vendita = Nessun costo</p>
+                    <p className="text-sm text-gray-300">Guadagniamo solo se Brand e Creator hanno successo insieme</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          
+          {/* Messaggio di Garanzia */}
+          <div className="text-center mt-16">
+            <div className="bg-gradient-to-r from-gray-800/50 to-gray-700/50 rounded-2xl p-8 backdrop-blur-sm border border-gray-600 hover:border-gray-500 transition-all duration-500 hover:scale-105">
+              <h3 className="text-2xl font-bold mb-4 text-transparent bg-clip-text bg-gradient-to-r from-green-400 to-blue-400">
+                <span className="keyword-highlight">Garanzia</span> di <span className="keyword-highlight">Trasparenza</span> Totale
+              </h3>
+              <p className="text-xl text-gray-300 leading-relaxed max-w-4xl mx-auto">
+                Gestiamo tutti i <span className="keyword-highlight">flussi di denaro</span> con la massima trasparenza. 
+                Dashboard in tempo reale, report dettagliati e <span className="keyword-highlight">pagamenti puntuali</span>. 
+                Se ci riusciamo, ci riusciamo insieme.
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+
       {/* CTA Finale */}
-      <section className="py-20 bg-gradient-to-r from-gray-900 to-black">
-        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <div>
-            <h2 className="text-4xl lg:text-5xl font-bold mb-6 font-spacegrotesk">
+      <section className="py-20 bg-gradient-to-r from-gray-900 to-black relative overflow-hidden">
+        {/* Background Pattern */}
+        <div className="absolute inset-0 opacity-5">
+          <div className="absolute top-10 right-10 w-20 h-20 bg-blue-400 rounded-full animate-pulse"></div>
+          <div className="absolute bottom-20 left-20 w-16 h-16 bg-green-400 rounded-full animate-bounce"></div>
+          <div className="absolute top-1/2 right-1/3 w-12 h-12 bg-yellow-400 rounded-full animate-ping"></div>
+        </div>
+        
+        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center relative z-10">
+          <div className="hover:scale-105 transition-transform duration-500">
+            <h2 className="text-4xl lg:text-5xl font-bold mb-6 font-spacegrotesk hover:text-transparent hover:bg-clip-text hover:bg-gradient-to-r hover:from-blue-400 hover:to-purple-400 transition-all duration-500">
               Pronto a <span className="keyword-highlight">rivoluzionare</span> il tuo <span className="keyword-highlight">business</span>?
             </h2>
-            <p className="text-xl text-gray-300 mb-10 leading-relaxed">
+            <p className="text-xl text-gray-300 mb-10 leading-relaxed hover:text-gray-100 transition-colors duration-300">
               Unisciti alla piattaforma che sta cambiando le regole dell&apos;affiliate marketing. 
-              Semplice, redditizio, innovativo.
+              <span className="keyword-highlight">Semplice</span>, <span className="keyword-highlight">redditizio</span>, <span className="keyword-highlight">innovativo</span>.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <button className="px-10 py-4 bg-white text-black rounded-lg font-semibold text-lg hover:bg-gray-200 transition-colors flex items-center justify-center">
-                Inizia come Brand <ArrowRight className="ml-2 w-5 h-5" />
+              <button className="px-10 py-4 bg-white text-black rounded-lg font-semibold text-lg hover:bg-gray-200 hover:scale-105 transition-all duration-300 flex items-center justify-center group">
+                Inizia come Brand <ArrowRight className="ml-2 w-5 h-5 group-hover:translate-x-1 transition-transform duration-300" />
               </button>
-              <button className="px-10 py-4 border-2 border-white rounded-lg font-semibold text-lg hover:bg-white hover:text-black transition-colors">
+              <button className="px-10 py-4 border-2 border-white rounded-lg font-semibold text-lg hover:bg-white hover:text-black hover:scale-105 transition-all duration-300">
                 Diventa Creator
               </button>
             </div>
